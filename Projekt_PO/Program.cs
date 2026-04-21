@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Projekt_PO
+namespace Project_PO
 {
     class Program
     {
