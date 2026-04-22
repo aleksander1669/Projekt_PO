@@ -14,11 +14,7 @@ namespace Project_PO
             do
             {
                 Console.WriteLine("Choose interested option:");
-                Console.WriteLine();
-                Console.WriteLine();
-                Console.WriteLine();
-                Console.WriteLine();
-                Console.WriteLine();
+                Console.WriteLine("0. Exit");
                 choice = Int_Input("Choice: ");
 
                 switch (choice)
