@@ -13,15 +13,15 @@ namespace Projekt_PO
         private string id;
         private string type;
         private string time;
-        private string lend;
-        private string price;
+        private bool lend;
+        private double price;
 
         private string name;
         private string surename;
         private string phone;
         private string identification;
 
-        public Equipment(string Id, string Type, string Time, string Lend, string Price)
+        public Equipment(string Id, string Type, string Time, bool Lend, double Price)
         {
             id = Id;
             type = Type;
@@ -34,7 +34,7 @@ namespace Projekt_PO
     {
         private string maintenance;
     
-    public Bike(string Id, string Type, string Time, string Lend, string Price, string Maintenance) : base(Id, Type, Time, Lend, Price)
+    public Bike(string Id, string Type, string Time, bool Lend, double Price, string Maintenance) : base(Id, Type, Time, Lend, Price)
         {
             maintenance = Maintenance;
         }
@@ -45,7 +45,7 @@ namespace Projekt_PO
         private string inspection;
         private string plate;
         private string oli;
-    public Motorcycle(string Id, string Type, string Time, string Lend, string Price, string Maintenance, string Inspection, string Plate, string Oil) : base(Id, Type, Time, Lend, Price)
+    public Motorcycle(string Id, string Type, string Time, bool Lend, double Price, string Maintenance, string Inspection, string Plate, string Oil) : base(Id, Type, Time, Lend, Price)
         {
             maintenance = Maintenance;
             inspection = Inspection;
