@@ -10,18 +10,12 @@ namespace Projekt_PO
 {
     public class Equipment
     {
-        private string id;
-        private string type;
-        private string time;
-        private bool lend;
-        private double price;
-
-        private string name;
-        private string surename;
-        private string phone;
-        private string identification;
-
-        public Equipment(string Id, string Type, string Time, bool Lend, double Price)
+        protected int id;
+        protected string type;
+        protected DateTime time;
+        protected bool lend;
+        protected double price;
+        public Equipment(int Id, string Type, DateTime Time, bool Lend, double Price)
         {
             id = Id;
             type = Type;
@@ -34,23 +28,51 @@ namespace Projekt_PO
     {
         private string maintenance;
     
-    public Bike(string Id, string Type, string Time, bool Lend, double Price, string Maintenance) : base(Id, Type, Time, Lend, Price)
+    public Bike(int Id, string Type, DateTime Time, bool Lend, double Price, string Maintenance) : base(Id, Type, Time, Lend, Price)
         {
             maintenance = Maintenance;
+        }
+    public void Show_Info_Short_Bike()
+        {
+            string x = string.Empty;
+            if (lend)
+            {
+                x = "Yes";
+            } else {
+                x = "No";
+            }
+            Console.WriteLine("=======================================================================");
+            Console.WriteLine("ID: " + id + "|| Bike: " + type + "|| Lendable: " + x + "|| Price: " + price + " zł");
+            Console.WriteLine("=======================================================================");
         }
     }
     public class Motorcycle : Equipment
     {
         private string maintenance;
-        private string inspection;
+        private DateTime inspection;
         private string plate;
-        private string oli;
-    public Motorcycle(string Id, string Type, string Time, bool Lend, double Price, string Maintenance, string Inspection, string Plate, string Oil) : base(Id, Type, Time, Lend, Price)
+        private int oli;
+    public Motorcycle(int Id, string Type, DateTime Time, bool Lend, double Price, string Maintenance, DateTime Inspection, string Plate, int Oil) : base(Id, Type, Time, Lend, Price)
         {
             maintenance = Maintenance;
             inspection = Inspection;
             plate = Plate;
             oli = Oil;
+        }
+        public void Show_Info_Short_Motorcycle()
+        {
+            string x = string.Empty;
+            if (lend)
+            {
+                x = "Yes";
+            }
+            else
+            {
+                x = "No";
+            }
+            Console.WriteLine("=======================================================================");
+            Console.WriteLine("ID: " + id + "|| Motorcycle: " + type + "|| Lendable: " + x + "|| Price: " + price + " zł");
+            Console.WriteLine("=======================================================================");
         }
     }
     public class Customer
