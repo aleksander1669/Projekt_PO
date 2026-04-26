@@ -2,8 +2,9 @@
 using System;
 using System.Data;
 using System.Security.Cryptography;
+using System.Text.Json;
 using System.Timers;
-using static System.Net.WebRequestMethods;
+using System.IO;
 
 namespace Project_PO
 {
@@ -11,12 +12,41 @@ namespace Project_PO
     {
         static void Main(string[] args)
         {
-            int item_count = 0;
+            int item_count_bike = 0;
+            int item_count_motorcycle = 0;
             int choice = 0;
             bool exit = false;
+            int global_id = 0;
             DateTime teraz = DateTime.Now;
             List<Bike> Bike_List = new List<Bike>();
             List<Motorcycle> Motorcycle_List = new List<Motorcycle>();
+            var options = new JsonSerializerOptions { WriteIndented = true };
+
+            if (File.Exists("bike.json"))
+            {
+                string json_loaded = File.ReadAllText("bike.json");
+                Bike_List = JsonSerializer.Deserialize<List<Bike>>(json_loaded);
+                if (Bike_List.Count > 0)
+                {
+                    item_count_bike = Bike_List.Max(b => b.Id);
+                }
+            }
+            if (File.Exists("motorcycle.json"))
+            {
+                string json_loaded = File.ReadAllText("motorcycle.json");
+                Motorcycle_List = JsonSerializer.Deserialize<List<Motorcycle>>(json_loaded);
+                if (Bike_List.Count > 0)
+                {
+                    item_count_motorcycle = Motorcycle_List.Max(b => b.Id);
+                }
+            }
+            if (item_count_bike >= item_count_motorcycle)
+            {
+                global_id = item_count_bike;
+            } else
+            {
+                global_id = item_count_motorcycle;
+            }
 
             Console.WriteLine("Welcome to our program!");
 
@@ -42,12 +72,23 @@ namespace Project_PO
                                 double b = Double_Input("Enter price per day for your bike: ", 5, 500, "Bike cannot cost that low", "Price is too high for a bike");
 
                                 Console.Clear();
-                                string c = String_Input("Enter some maintenance information for your bike (for exmaple incoming chain conservation): ");
+                                double c = Double_Input("Enter deposit for your bike: ", 50, 1000, "Bike deposit cannot be that low", "Deposit is too high for a bike");
 
-                                item_count++;
-                                Bike nowy = new Bike(item_count, a, teraz, true, b, c);
+                                Console.Clear();
+                                string d = String_Input("Enter some maintenance information for your bike (for exmaple incoming chain conservation): ");
+
+                                global_id++;
+                                item_count_bike++;
+                                Bike nowy = new Bike(global_id, a, teraz, true, b, c, d);
                                 Bike_List.Add(nowy);
                                 Console.Clear();
+                                
+                                string json_string = JsonSerializer.Serialize(Bike_List, options);
+
+                                // Do zmiany na path "bike.json"
+
+                                File.WriteAllText("bike.json",  json_string);
+
                                 Console.WriteLine("Bike was succesfully added to database");
                             } 
                             else if (choice_2 == 2)
@@ -59,21 +100,32 @@ namespace Project_PO
                                 double b = Double_Input("Enter price per day for your motorcycle: ", 100, 2000, "Motorcycle cannot cost that low", "Price is too high for a motorcycle");
 
                                 Console.Clear();
-                                string c = String_Input("Enter some maintenance information for your motorcycle (for exmaple incoming oil change): ");
+                                double c = Double_Input("Enter deposit cost: ", 200, 2000, "Deposit for motorcycle cannot be that low", "Deposit is too high for a motorcycle");
 
                                 Console.Clear();
-                                DateTime d = DateTime_Input("Enter date of inspection expiration : ");
+                                string d = String_Input("Enter some maintenance information for your motorcycle (for exmaple incoming oil change): ");
 
                                 Console.Clear();
-                                string e = String_Input("Enter plate number: ");
+                                DateTime e = DateTime_Input("Enter date of inspection expiration : ");
 
                                 Console.Clear();
-                                int f = Int_Input("Enter how much kilometers have been driven on current oil to keep track of oil change (if unknown input -1): ", -1, 50000, "Selected oil range is invalid", "Either value is invalid or you should have not bought this motorcycle");
+                                string f = String_Input("Enter plate number: ");
 
-                                item_count++;
-                                Motorcycle nowy = new Motorcycle(item_count, a, teraz, true, b, c, d, e, f);
+                                Console.Clear();
+                                int g = Int_Input("Enter how much kilometers have been driven on current oil (if unknown input -1): ", -1, 50000, "Selected oil range is invalid", "Either value is invalid or you should have not bought this motorcycle");
+
+                                global_id++;
+                                item_count_motorcycle++;
+                                Motorcycle nowy = new Motorcycle(global_id, a, teraz, false, b, c, d, e, f, g);
                                 Motorcycle_List.Add(nowy);
                                 Console.Clear();
+
+                                string json_string = JsonSerializer.Serialize(Motorcycle_List, options);
+
+                                // Do zmiany na path "motorcycle.json"
+
+                                File.WriteAllText("motorcycle.json", json_string);
+
                                 Console.WriteLine("Motorcycle was succesfully added to database");
                             } 
                             else if (choice_2 == 0)
@@ -84,30 +136,58 @@ namespace Project_PO
                         } 
                         else if (choice_1 == 2)
                         {
-                            if (item_count == 0)
+                            bool exit_view = false;
+                            int choice_view;
+                            do
                             {
                                 Console.Clear();
-                                Console.WriteLine("There is no equipment added yet");
-                            } else
-                            {
-                                Console.Clear();
-                                Console.WriteLine("============================================================================");
-                                Console.WriteLine("Available bikes:");
-                                foreach (Bike bike in Bike_List)
+                                if (global_id == 0 && item_count_bike == 0 && item_count_motorcycle == 0)
                                 {
-                                    bike.Show_Info_Short_Bike();
+                                    Console.Clear();
+                                    Console.WriteLine("There is no equipment added yet");
+                                    exit_view = true;
                                 }
-                                Console.WriteLine();
-                                Console.WriteLine();
-                                Console.WriteLine("============================================================================");
-                                Console.WriteLine("Available motorcycles:");
-                                foreach (Motorcycle motor in Motorcycle_List)
+                                if (item_count_bike > 0)
                                 {
-                                    motor.Show_Info_Short_Motorcycle();
+                                    Console.Clear();
+                                    Console.WriteLine("=====================================================================================================");
+                                    Console.WriteLine("Available bikes:");
+                                    foreach (Bike bike in Bike_List)
+                                    {
+                                        bike.Info_Short();
+                                    }
+                                    Console.WriteLine("=====================================================================================================");
+                                    Console.WriteLine();
+                                    Console.WriteLine();
                                 }
-                                Console.WriteLine();
-                                Console.WriteLine();
-                            }
+                                if (item_count_motorcycle > 0)
+                                {
+                                    Console.WriteLine("=====================================================================================================");
+                                    Console.WriteLine("Available motorcycles:");
+                                    foreach (Motorcycle motor in Motorcycle_List)
+                                    {
+                                        motor.Info_Short();
+                                    }
+                                    Console.WriteLine("=====================================================================================================");
+                                    Console.WriteLine();
+                                    Console.WriteLine();
+                                }
+                                if (global_id > 0)
+                                {
+                                    Console.WriteLine("1. Show details");
+                                    Console.WriteLine("0. Exit");
+                                    choice_view = Int_Input("Choice: ", 0, 1, "Invalid choice", "Invalid choice");
+                                    if (choice_view == 1)
+                                    {
+
+                                    }
+                                    else if (choice_view == 0)
+                                    {
+                                        Console.Clear();
+                                        exit_view = true;
+                                    }
+                                }
+                            } while (!exit_view);
                         }
                         else if (choice_1 == 0)
                         {
@@ -151,13 +231,13 @@ namespace Project_PO
                         fine = false;
                     }
                 }
-                catch (FormatException ex)
+                catch (FormatException)
                 {
                     Console.Clear();
                     Console.WriteLine("Wrong format");
                     fine = false;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     Console.Clear();
                     Console.WriteLine("Something went wrong");
@@ -189,13 +269,13 @@ namespace Project_PO
                         fine = false;
                     }
                 }
-                catch (FormatException ex)
+                catch (FormatException)
                 {
                     Console.Clear();
                     Console.WriteLine("Wrong format");
                     fine = false;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     Console.Clear();
                     Console.WriteLine("Something went wrong");
@@ -208,7 +288,7 @@ namespace Project_PO
         static string String_Input(string message)
         {
             bool fine = true;
-            string x = null;
+            string x = string.Empty;
             do
             {
                 fine = true;
