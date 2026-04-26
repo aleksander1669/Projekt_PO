@@ -21,8 +21,10 @@ namespace Project_PO
             DateTime teraz = DateTime.Now;
             List<Bike> Bike_List = new List<Bike>();
             List<Motorcycle> Motorcycle_List = new List<Motorcycle>();
+            List<Rent> Rent_List = new List<Rent>();
+            List<Customer> Customer_List = new List<Customer>();
             var options = new JsonSerializerOptions { WriteIndented = true };
-
+            
             if (File.Exists("bike.json"))
             {
                 string json_loaded = File.ReadAllText("bike.json");
@@ -68,7 +70,7 @@ namespace Project_PO
 
             do
             {
-                choice = Int_Input("Choose interested option:\n1. Equipment menagement\n0. Exit\nChoice: ", 0, 10, "Invalid choice", "Invalid choice");
+                choice = Int_Input("Choose interested option:\n1. Equipment management\n2. Rent management\n0. Exit\nChoice: ", 0, 10, "Invalid choice", "Invalid choice");
 
                 switch (choice)
                 {
@@ -310,10 +312,86 @@ namespace Project_PO
                             continue;
                         }
                         break;
-                    default:
+                    case 2:
                         Console.Clear();
-                        Console.WriteLine("Invalid input");
-                        break;
+                        int choice_rent = Int_Input("What action you want to do:\n1. Rent item\n2. Settle rented item\n0. Return\nChoice: ", 0, 2, "Invalid input", "Invalid input");
+
+                        if (choice_rent == 0)
+                        {
+                            Console.Clear();
+                            continue;
+                        }
+                        else if (choice_rent == 1)
+                        {
+                            Console.Clear();
+                            if (global_id == 0)
+                            {
+                                Console.Clear();
+                                Console.WriteLine("There is no equipment added yet");
+                            }
+                            if (Bike_List_Counter > 0)
+                            {
+                                Console.Clear();
+                                Console.WriteLine("=====================================================================================================");
+                                Console.WriteLine("Available bikes:");
+                                foreach (Bike bike in Bike_List)
+                                {
+                                    bike.Info_Short();
+                                }
+                                Console.WriteLine("=====================================================================================================");
+                                Console.WriteLine();
+                                Console.WriteLine();
+                            }
+                            if (Motorcycle_List_Counter > 0)
+                            {
+                                Console.WriteLine("=====================================================================================================");
+                                Console.WriteLine("Available motorcycles:");
+                                foreach (Motorcycle motor in Motorcycle_List)
+                                {
+                                    motor.Info_Short();
+                                }
+                                Console.WriteLine("=====================================================================================================");
+                                Console.WriteLine();
+                                Console.WriteLine();
+                            }
+                            if (global_id > 0)
+                            {
+                                int choice_rent_id = Int_Input_No_Max_Or_Low("Select ID of an item to rent (0 to return): ");
+
+                                Bike rent_bike = Bike_List.FirstOrDefault(b => b.Id == choice_rent_id);
+                                Motorcycle rent_motorcycle = Motorcycle_List.FirstOrDefault(b => b.Id == choice_rent_id);
+
+                                if (choice_rent_id == 0)
+                                {
+                                    Console.Clear();
+                                    continue;
+                                } else if (rent_bike != null)
+                                {
+                                    Console.Clear();
+                                    string a = String_Input_No_Digits("Enter customer's name: ");
+
+                                    Console.Clear();
+                                    string b = String_Input_No_Digits("Enter customer's surename: ");
+
+                                    Console.Clear();
+                                    int c = Int_Input_Lenght("Enter customer's phone: ", 9, "Nuber needs to contain 9 digits");
+
+                                    Console.Clear();
+                                    string d = String_Input_No_Digits_Lenght("Enter customer's identification number: ", 11, "This number has to contain 11 digits");
+
+                                    Customer new_customer = new Customer(a, b, c, d);
+                                } else if (rent_motorcycle != null)
+                                {
+
+                                } else
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("Invalid input");
+                                    continue;
+                                }
+                            }
+                        }
+                            break;
                     case 0:
                         exit = true;
 
@@ -396,6 +474,45 @@ namespace Project_PO
             } while (!fine);
             return x;
         }
+        static int Int_Input_Lenght(string message, int lenght, string lenght_message)
+        {
+            bool fine = true;
+            int x = 0;
+            string y = string.Empty;
+            do
+            {
+                fine = true;
+                Console.Write(message);
+                y = Console.ReadLine();
+                int z = y.Length;
+                if (z != lenght)
+                {
+                    Console.Clear();
+                    Console.WriteLine(lenght_message);
+                    fine = false;
+                } else
+                {
+                    fine = true;
+                    try
+                    {
+                        x = Convert.ToInt32(y);
+                    }
+                    catch (FormatException)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Wrong format");
+                        fine = false;
+                    }
+                    catch (Exception)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Something went wrong");
+                        fine = false;
+                    }
+                }
+            } while (!fine);
+            return x;
+        }
         static double Double_Input(string message, double min_option, double max_option, string min_option_message, string max_option_message)
         {
             bool fine = true;
@@ -459,21 +576,75 @@ namespace Project_PO
             string x = null;
             do
             {
+                fine = true;
+                x = String_Input(message);
                 if (x == string.Empty)
                 {
                     Console.Clear();
                     fine = false;
                     Console.WriteLine("This blank cannot be empty");
                 }
-                foreach (char c in x)
+                try
                 {
-                    if (!char.IsLetter(c))
+                    foreach (char c in x)
                     {
-                        fine = false;
-                        Console.Clear();
-                        Console.WriteLine("This data cannot contain any digits");
-                        break;
+                        if (!char.IsLetter(c))
+                        {
+                            fine = false;
+                            Console.Clear();
+                            Console.WriteLine("This data cannot contain any digits");
+                            break;
+                        }
                     }
+                } catch (NullReferenceException)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Something went wrong");
+                    fine = false;
+                }
+
+            } while (!fine);
+            return x;
+        }
+        static string String_Input_No_Digits_Lenght(string message, int lenght, string lenght_message)
+        {
+            bool fine = true;
+            string x = null;
+            do
+            {
+                fine = true;
+                x = String_Input(message);
+                int z = x.Length;
+                if (z != lenght)
+                {
+                    Console.Clear();
+                    fine = false;
+                    Console.WriteLine(lenght_message);
+                }
+                if (x == string.Empty)
+                {
+                    Console.Clear();
+                    fine = false;
+                    Console.WriteLine("This blank cannot be empty");
+                }
+                try
+                {
+                    foreach (char c in x)
+                    {
+                        if (!char.IsDigit(c))
+                        {
+                            fine = false;
+                            Console.Clear();
+                            Console.WriteLine("This data cannot contain any letters");
+                            break;
+                        }
+                    }
+                }
+                catch (NullReferenceException)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Something went wrong");
+                    fine = false;
                 }
 
             } while (!fine);

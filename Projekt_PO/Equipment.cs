@@ -10,6 +10,8 @@ using System.Text.Json.Serialization;
 
 namespace Projekt_PO
 {
+    [JsonDerivedType(typeof(Bike), typeDiscriminator: "rower")]
+    [JsonDerivedType(typeof(Motorcycle), typeDiscriminator: "motocykl")]
     public class Equipment
     {
         public int Id { get; private set; }
@@ -124,12 +126,12 @@ namespace Projekt_PO
     }
     public class Customer
     {
-        private string Name;
-        private string Surename;
-        private string Phone;
-        private string Identification;
+        public string Name {  get; private set; }
+        public string Surename { get; private set; }
+        public int Phone { get; private set; }
+        public string Identification { get; private set; }
 
-        public Customer(string name, string surename, string phone, string identification)
+        public Customer(string name, string surename, int phone, string identification)
         {
             Name = name;
             Surename = surename;
@@ -137,14 +139,14 @@ namespace Projekt_PO
             Identification = identification;
         }
     }
-    public class Rental
+    public class Rent
     {
-        public Customer Renter;
-        public Equipment Rented_Item;
+        public Customer Renter { get; private set; }
+        public Equipment Rented_Item { get; private set; }
 
-        public DateTime Rental_Date;
-        public string Rental_Till;
-    public Rental(Customer renter,  Equipment rented_item, string rental_till)
+        public DateTime Rental_Date { get; private set; }
+        public string Rental_Till { get; private set; }
+        public Rent(Customer renter,  Equipment rented_item, string rental_till)
         {
             Renter = renter;
             Rented_Item = rented_item;
