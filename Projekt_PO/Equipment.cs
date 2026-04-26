@@ -44,6 +44,20 @@ namespace Projekt_PO
         }
         public virtual void Info_All()
         {
+            string x = string.Empty;
+            if (Lend)
+            {
+                x = "Yes";
+            } else
+            {
+                x = "No";
+            }
+            Console.WriteLine("=====================================================================================================");
+            Console.WriteLine("* ID: " + Id);
+            Console.WriteLine("* Name/Type: " + Type);
+            Console.WriteLine("* Added: " + Time);
+            Console.WriteLine("* Lendable: " + x);
+            Console.WriteLine("* Price: " + Price + " Deposit: " + Deposit);
 
         }
         public virtual double Count_Cost(int days)
@@ -70,6 +84,11 @@ namespace Projekt_PO
         {
             base.Info_Short();
         }
+        public override void Info_All()
+        {
+            base.Info_All();
+            Console.WriteLine("* Maintenance: " + Maintenance);
+        }
     }
     public class Motorcycle : Equipment
     {
@@ -89,6 +108,14 @@ namespace Projekt_PO
         {
             base.Info_Short();
             Console.WriteLine("|| Inspection: " + Inspection + " || Plate number: " + Plate + " || Oil life: " + Oil + " kilometers ||");
+        }
+        public override void Info_All()
+        {
+            base.Info_All();
+            Console.WriteLine("* Oil: " + Oil);
+            Console.WriteLine("* Inspection: " + Inspection);
+            Console.WriteLine("* Plate number: " + Plate);
+            Console.WriteLine("* Maintenance: " + Maintenance);
         }
         public override double Count_Cost(int days)
         {
