@@ -59,7 +59,7 @@ namespace Projekt_PO
             Console.WriteLine("* Name/Type: " + Type);
             Console.WriteLine("* Added: " + Time);
             Console.WriteLine("* Lendable: " + x);
-            Console.WriteLine("* Price: " + Price + " Deposit: " + Deposit);
+            Console.WriteLine("* Price: " + Price + " + Deposit: " + Deposit);
 
         }
         public virtual double Count_Cost(int days)
@@ -131,6 +131,7 @@ namespace Projekt_PO
         public int Phone { get; private set; }
         public string Identification { get; private set; }
 
+        [JsonConstructor]
         public Customer(string name, string surename, int phone, string identification)
         {
             Name = name;
@@ -141,13 +142,15 @@ namespace Projekt_PO
     }
     public class Rent
     {
+        public int Id { get; private set; }
         public Customer Renter { get; private set; }
         public Equipment Rented_Item { get; private set; }
 
         public DateTime Rental_Date { get; private set; }
-        public string Rental_Till { get; private set; }
-        public Rent(Customer renter,  Equipment rented_item, string rental_till)
+        public DateTime Rental_Till { get; private set; }
+        public Rent(int id, Customer renter,  Equipment rented_item, DateTime rental_till)
         {
+            Id = id;
             Renter = renter;
             Rented_Item = rented_item;
             Rental_Date = DateTime.Now;

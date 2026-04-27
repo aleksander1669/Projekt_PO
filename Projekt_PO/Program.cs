@@ -1,11 +1,12 @@
 ﻿using Projekt_PO;
 using System;
+using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.Metrics;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Timers;
-using System.IO;
-using System.ComponentModel;
 
 namespace Project_PO
 {
@@ -13,8 +14,6 @@ namespace Project_PO
     {
         static void Main(string[] args)
         {
-            int item_count_bike = 0;
-            int item_count_motorcycle = 0;
             int choice = 0;
             bool exit = false;
             int global_id = 0;
@@ -25,6 +24,11 @@ namespace Project_PO
             List<Customer> Customer_List = new List<Customer>();
             var options = new JsonSerializerOptions { WriteIndented = true };
             
+            if (File.Exists("rent.json"))
+            {
+                string loaded_rent = File.ReadAllText("rent.json");
+                Rent_List = JsonSerializer.Deserialize<List<Rent>>(loaded_rent);
+            }
             if (File.Exists("bike.json"))
             {
                 string json_loaded = File.ReadAllText("bike.json");
@@ -35,35 +39,45 @@ namespace Project_PO
                 string json_loaded = File.ReadAllText("motorcycle.json");
                 Motorcycle_List = JsonSerializer.Deserialize<List<Motorcycle>>(json_loaded);
             }
-
+            int Rent_Id = 0;
             int Max_Id = 0;
             int Max_Id_Bike = 0;
             int Max_Id_Motorcycle = 0;
             int Bike_List_Counter = Bike_List.Count;
             int Motorcycle_List_Counter = Motorcycle_List.Count;
             global_id = Bike_List_Counter + Motorcycle_List_Counter;
-            try
+
+            if (Bike_List.Count == 0)
             {
-                if (Bike_List.Max(b => b.Id) > Motorcycle_List.Max(b => b.Id))
-                {
-                    Max_Id = Max_Id_Bike;
-                }
-                else
-                {
-                    Max_Id = Max_Id_Motorcycle;
-                }
-            } catch (InvalidOperationException)
+                Max_Id_Bike = 0;
+            } else
             {
-                if (Bike_List_Counter == 0 && Motorcycle_List_Counter == 0)
-                {
-                    Max_Id = 0;
-                } else if (Motorcycle_List_Counter == 0)
-                {
-                    Max_Id = Bike_List.Max(b => b.Id);
-                } else
-                {
-                    Max_Id = Motorcycle_List.Max(b => b.Id);
-                }
+                Max_Id_Bike = Bike_List.Max(b => b.Id);
+            }
+            if (Motorcycle_List.Count == 0)
+            {
+                Max_Id_Motorcycle = 0;
+            }
+            else
+            {
+                Max_Id_Motorcycle = Motorcycle_List.Max(b => b.Id);
+            }
+
+            if (Max_Id_Bike > Max_Id_Motorcycle)
+            {
+                Max_Id = Max_Id_Bike;
+            } else
+            {
+                Max_Id = Max_Id_Motorcycle;
+            }
+
+            if (Rent_List.Count == 0)
+            {
+                Rent_Id = 0;
+            }
+            else
+            {
+                Rent_Id = Rent_List.Max(b =>b.Id);
             }
 
             Console.WriteLine("Welcome to our program!");
@@ -314,6 +328,7 @@ namespace Project_PO
                         break;
                     case 2:
                         Console.Clear();
+                        
                         int choice_rent = Int_Input("What action you want to do:\n1. Rent item\n2. Settle rented item\n0. Return\nChoice: ", 0, 2, "Invalid input", "Invalid input");
 
                         if (choice_rent == 0)
@@ -379,10 +394,48 @@ namespace Project_PO
                                     Console.Clear();
                                     string d = String_Input_No_Digits_Lenght("Enter customer's identification number: ", 11, "This number has to contain 11 digits");
 
+                                    Console.Clear();
+                                    DateTime e = DateTime_Input("Insert date of return (Input example \"2027-6-15\"): ");
+
+                                    Rent_Id++;
                                     Customer new_customer = new Customer(a, b, c, d);
+                                    Customer_List.Add(new_customer);
+                                    Rent new_rent = new Rent(Rent_Id, new_customer, rent_bike, e);
+                                    Rent_List.Add(new_rent);
+
+                                    string json_rent = JsonSerializer.Serialize(Rent_List, options);
+
+                                    File.WriteAllText("rent.json", json_rent);
+
                                 } else if (rent_motorcycle != null)
                                 {
+                                    Console.Clear();
+                                    string a = String_Input_No_Digits("Enter customer's name: ");
 
+                                    Console.Clear();
+                                    string b = String_Input_No_Digits("Enter customer's surename: ");
+
+                                    Console.Clear();
+                                    int c = Int_Input_Lenght("Enter customer's phone: ", 9, "Nuber needs to contain 9 digits");
+
+                                    Console.Clear();
+                                    string d = String_Input_No_Digits_Lenght("Enter customer's identification number: ", 11, "This number has to contain 11 digits");
+
+                                    Console.Clear();
+                                    DateTime e = DateTime_Input("Insert date of return (Input example \"2027-6-15\"): ");
+
+                                    Rent_Id++;
+                                    Customer new_customer = new Customer(a, b, c, d);
+                                    Customer_List.Add(new_customer);
+                                    Rent new_rent = new Rent(Rent_Id, new_customer, rent_motorcycle, e);
+                                    Rent_List.Add(new_rent);
+
+                                    string json_rent = JsonSerializer.Serialize(Rent_List, options);
+
+                                    Console.Clear();
+                                    Console.WriteLine("New customer added to database");
+
+                                    File.WriteAllText("rent.json", json_rent);
                                 } else
                                 {
                                     Console.Clear();
