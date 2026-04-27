@@ -5,64 +5,35 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Timers;
 using System.Xml.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Projekt_PO
 {
+    [JsonDerivedType(typeof(Bike), typeDiscriminator: "rower")]
+    [JsonDerivedType(typeof(Motorcycle), typeDiscriminator: "motocykl")]
     public class Equipment
     {
-        protected int id;
-        protected string type;
-        protected DateTime time;
-        protected bool lend;
-        protected double price;
-        public Equipment(int Id, string Type, DateTime Time, bool Lend, double Price)
+        public int Id { get; private set; }
+        public string Type { get; private set; }
+        public DateTime Time { get; private set; }
+        public bool Lend { get; private set; }
+        public double Price { get; private set; }
+        public double Deposit { get; private set; }
+        [JsonConstructor]
+        public Equipment(int id, string type, DateTime time, bool lend, double price, double deposit)
         {
-            id = Id;
-            type = Type;
-            time = Time;
-            lend = Lend;
-            price = Price;
+            Id = id;
+            Type = type;
+            Time = time;
+            Lend = lend;
+            Price = price;
+            Deposit = deposit;
         }
-    }
-    public class Bike : Equipment
-    {
-        private string maintenance;
-    
-    public Bike(int Id, string Type, DateTime Time, bool Lend, double Price, string Maintenance) : base(Id, Type, Time, Lend, Price)
-        {
-            maintenance = Maintenance;
-        }
-    public void Show_Info_Short_Bike()
+        public virtual void Info_Short()
         {
             string x = string.Empty;
-            if (lend)
-            {
-                x = "Yes";
-            } else {
-                x = "No";
-            }
-            Console.WriteLine("=======================================================================");
-            Console.WriteLine("ID: " + id + "|| Bike: " + type + "|| Lendable: " + x + "|| Price: " + price + " zł");
-            Console.WriteLine("=======================================================================");
-        }
-    }
-    public class Motorcycle : Equipment
-    {
-        private string maintenance;
-        private DateTime inspection;
-        private string plate;
-        private int oli;
-    public Motorcycle(int Id, string Type, DateTime Time, bool Lend, double Price, string Maintenance, DateTime Inspection, string Plate, int Oil) : base(Id, Type, Time, Lend, Price)
-        {
-            maintenance = Maintenance;
-            inspection = Inspection;
-            plate = Plate;
-            oli = Oil;
-        }
-        public void Show_Info_Short_Motorcycle()
-        {
-            string x = string.Empty;
-            if (lend)
+            if (Lend)
             {
                 x = "Yes";
             }
@@ -70,39 +41,120 @@ namespace Projekt_PO
             {
                 x = "No";
             }
-            Console.WriteLine("=======================================================================");
-            Console.WriteLine("ID: " + id + "|| Motorcycle: " + type + "|| Lendable: " + x + "|| Price: " + price + " zł");
-            Console.WriteLine("=======================================================================");
+            Console.WriteLine("=====================================================================================================");
+            Console.WriteLine("|| ID: " + Id + "|| Type/Name of Equipment: " + Type + "|| Lendable: " + x + "|| Price per day: " + Price + " zł + Deposit: " + Deposit + " zł ||");
+        }
+        public virtual void Info_All()
+        {
+            string x = string.Empty;
+            if (Lend)
+            {
+                x = "Yes";
+            } else
+            {
+                x = "No";
+            }
+            Console.WriteLine("=====================================================================================================");
+            Console.WriteLine("* ID: " + Id);
+            Console.WriteLine("* Name/Type: " + Type);
+            Console.WriteLine("* Added: " + Time);
+            Console.WriteLine("* Lendable: " + x);
+            Console.WriteLine("* Price: " + Price + " + Deposit: " + Deposit);
+
+        }
+        public virtual double Count_Cost(int days)
+        {
+            double final_cost;
+
+            final_cost = (Price * days) + Deposit;
+            return final_cost;
+        }
+    }
+    public class Bike : Equipment
+    {
+        public string Maintenance {  get; private set; }
+        [JsonConstructor]
+    public Bike(int Id, string Type, DateTime Time, bool Lend, double Price, double Deposit, string maintenance) : base(Id, Type, Time, Lend, Price, Deposit)
+        {
+            Maintenance = maintenance;
+        }
+        public override double Count_Cost(int days)
+        {
+            return base.Count_Cost(days);
+        }
+        public override void Info_Short()
+        {
+            base.Info_Short();
+        }
+        public override void Info_All()
+        {
+            base.Info_All();
+            Console.WriteLine("* Maintenance: " + Maintenance);
+        }
+    }
+    public class Motorcycle : Equipment
+    {
+        public string Maintenance { get; private set; }
+        public DateTime Inspection {  get; private set; }
+        public string Plate { get; private set; }
+        public int Oil { get; private set; }
+        [JsonConstructor]
+    public Motorcycle(int id, string type, DateTime time, bool lend, double price, double deposit, string maintenance, DateTime inspection, string plate, int oil) : base(id, type, time, lend, price, deposit)
+        {
+            Maintenance = maintenance;
+            Inspection = inspection;
+            Plate = plate;
+            Oil = oil;
+        }
+        public override void Info_Short()
+        {
+            base.Info_Short();
+            Console.WriteLine("|| Inspection: " + Inspection + " || Plate number: " + Plate + " || Oil life: " + Oil + " kilometers ||");
+        }
+        public override void Info_All()
+        {
+            base.Info_All();
+            Console.WriteLine("* Oil: " + Oil);
+            Console.WriteLine("* Inspection: " + Inspection);
+            Console.WriteLine("* Plate number: " + Plate);
+            Console.WriteLine("* Maintenance: " + Maintenance);
+        }
+        public override double Count_Cost(int days)
+        {
+            return base.Count_Cost(days);
         }
     }
     public class Customer
     {
-        private string name;
-        private string surename;
-        private string phone;
-        private string identification;
+        public string Name {  get; private set; }
+        public string Surename { get; private set; }
+        public int Phone { get; private set; }
+        public string Identification { get; private set; }
 
-        public Customer(string Name, string Surename, string Phone, string Identification)
+        [JsonConstructor]
+        public Customer(string name, string surename, int phone, string identification)
         {
-            name = Name;
-            surename = Surename;
-            phone = Phone;
-            identification = Identification;
+            Name = name;
+            Surename = surename;
+            Phone = phone;
+            Identification = identification;
         }
     }
-    public class Rental
+    public class Rent
     {
-        public Customer renter;
-        public Equipment rented_item;
+        public int Id { get; private set; }
+        public Customer Renter { get; private set; }
+        public Equipment Rented_Item { get; private set; }
 
-        public DateTime rental_date;
-        public string rental_till;
-    public Rental(Customer Renter,  Equipment Rented_Item, string Rental_Till)
+        public DateTime Rental_Date { get; private set; }
+        public DateTime Rental_Till { get; private set; }
+        public Rent(int id, Customer renter,  Equipment rented_item, DateTime rental_till)
         {
-            renter = Renter;
-            rented_item = Rented_Item;
-            rental_date = DateTime.Now;
-            rental_till = Rental_Till;
+            Id = id;
+            Renter = renter;
+            Rented_Item = rented_item;
+            Rental_Date = DateTime.Now;
+            Rental_Till = rental_till;
         }
     }
 }
