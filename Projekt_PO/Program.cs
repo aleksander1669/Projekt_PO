@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics.Metrics;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using System.Timers;
 
@@ -16,7 +17,6 @@ namespace Project_PO
         {
             int choice = 0;
             bool exit = false;
-            int global_id = 0;
             DateTime teraz = DateTime.Now;
             List<Bike> Bike_List = new List<Bike>();
             List<Motorcycle> Motorcycle_List = new List<Motorcycle>();
@@ -43,9 +43,6 @@ namespace Project_PO
             int Max_Id = 0;
             int Max_Id_Bike = 0;
             int Max_Id_Motorcycle = 0;
-            int Bike_List_Counter = Bike_List.Count;
-            int Motorcycle_List_Counter = Motorcycle_List.Count;
-            global_id = Bike_List_Counter + Motorcycle_List_Counter;
 
             if (Bike_List.Count == 0)
             {
@@ -84,18 +81,18 @@ namespace Project_PO
 
             do
             {
-                choice = Int_Input("Choose interested option:\n1. Equipment management\n2. Rent management\n0. Exit\nChoice: ", 0, 10, "Invalid choice", "Invalid choice");
+                choice = Int_Input("Choose interested option:\n1. Equipment management\n2. Rent management\n0. Exit\nChoice: ", 0, 2, "Invalid choice", "Invalid choice");
 
                 switch (choice)
                 {
                     case 1:
                         Console.Clear();
-                        int choice_1 = Int_Input("Choose what you want to do:\n1. Add new equipment\n2. Show available equipment\n3. Remove equipment\n0. Return\nChoice: ", 0, 3, "Invalid choice", "Invalid choice");
-                        if (choice_1 == 1)
+                        int choice_equipment_menager = Int_Input("Choose what you want to do:\n1. Add new equipment\n2. Show available equipment\n3. Remove equipment from database\n0. Return\nChoice: ", 0, 3, "Invalid choice", "Invalid choice");
+                        if (choice_equipment_menager == 1)
                         {
                             Console.Clear();
-                            int choice_2 = Int_Input("Choose what equipment you want to add:\n1. Bike\n2. Motorcycle\n0. Return\nChoice: ", 0, 2, "Invalid choice", "Invalid choice");
-                            if (choice_2 == 1)
+                            int choice_add = Int_Input("Choose what equipment you want to add:\n1. Bike\n2. Motorcycle\n0. Return\nChoice: ", 0, 2, "Invalid choice", "Invalid choice");
+                            if (choice_add == 1)
                             {
                                 Console.Clear();
                                 string a = String_Input("Enter name/type of your bike: ");
@@ -109,9 +106,8 @@ namespace Project_PO
                                 Console.Clear();
                                 string d = String_Input("Enter some maintenance information for your bike (for exmaple incoming chain conservation): ");
 
-                                global_id++;
-                                Bike_List_Counter++;
-                                Bike nowy = new Bike(global_id, a, teraz, true, b, c, d);
+                                Max_Id++;
+                                Bike nowy = new Bike(Max_Id, a, teraz, true, b, c, d);
                                 Bike_List.Add(nowy);
                                 Console.Clear();
                                 
@@ -121,7 +117,7 @@ namespace Project_PO
 
                                 Console.WriteLine("Bike was succesfully added to database");
                             } 
-                            else if (choice_2 == 2)
+                            else if (choice_add == 2)
                             {
                                 Console.Clear();
                                 string a = String_Input("Enter name/type of your motorcycle: ");
@@ -144,9 +140,8 @@ namespace Project_PO
                                 Console.Clear();
                                 int g = Int_Input("Enter how much kilometers have been driven on current oil (if unknown input -1): ", -1, 50000, "Selected oil range is invalid", "Either value is invalid or you should have not bought this motorcycle");
 
-                                global_id++;
-                                Motorcycle_List_Counter++;
-                                Motorcycle nowy = new Motorcycle(global_id, a, teraz, false, b, c, d, e, f, g);
+                                Max_Id++;
+                                Motorcycle nowy = new Motorcycle(Max_Id, a, teraz, true, b, c, d, e, f, g);
                                 Motorcycle_List.Add(nowy);
                                 Console.Clear();
 
@@ -156,51 +151,51 @@ namespace Project_PO
 
                                 Console.WriteLine("Motorcycle was succesfully added to database");
                             } 
-                            else if (choice_2 == 0)
+                            else if (choice_add == 0)
                             {
                                 Console.Clear();
                                 continue;
                             }
                         } 
-                        else if (choice_1 == 2)
+                        else if (choice_equipment_menager == 2)
                         {
                             bool exit_view = false;
                             int choice_view;
                             do
                             {
                                 Console.Clear();
-                                if (global_id == 0)
+                                if (Bike_List.Count == 0 && Motorcycle_List.Count == 0)
                                 {
                                     Console.Clear();
                                     Console.WriteLine("There is no equipment added yet");
                                     exit_view = true;
                                 }
-                                if (Bike_List_Counter > 0)
+                                if (Bike_List.Count > 0)
                                 {
                                     Console.Clear();
-                                    Console.WriteLine("=====================================================================================================");
+                                    Console.WriteLine("==================================================================================================================");
                                     Console.WriteLine("Available bikes:");
                                     foreach (Bike bike in Bike_List)
                                     {
                                         bike.Info_Short();
                                     }
-                                    Console.WriteLine("=====================================================================================================");
+                                    Console.WriteLine("==================================================================================================================");
                                     Console.WriteLine();
                                     Console.WriteLine();
                                 }
-                                if (Motorcycle_List_Counter > 0)
+                                if (Motorcycle_List.Count > 0)
                                 {
-                                    Console.WriteLine("=====================================================================================================");
+                                    Console.WriteLine("==================================================================================================================");
                                     Console.WriteLine("Available motorcycles:");
                                     foreach (Motorcycle motor in Motorcycle_List)
                                     {
                                         motor.Info_Short();
                                     }
-                                    Console.WriteLine("=====================================================================================================");
+                                    Console.WriteLine("==================================================================================================================");
                                     Console.WriteLine();
                                     Console.WriteLine();
                                 }
-                                if (global_id > 0)
+                                if (Bike_List.Count > 0 || Motorcycle_List.Count > 0)
                                 {
                                     choice_view = Int_Input_No_Max_Or_Low("Select ID of an item to see details or enter 0 to exit: ");
                                     
@@ -216,7 +211,7 @@ namespace Project_PO
                                     {
                                         Console.Clear();
                                         bike_details.Info_All();
-                                        Console.WriteLine("=====================================================================================================");
+                                        Console.WriteLine("==================================================================================================================");
                                         Console.WriteLine();
                                         Console.WriteLine("Press any key to continue...");
                                         Console.ReadKey();
@@ -227,7 +222,7 @@ namespace Project_PO
                                     {
                                         Console.Clear();
                                         motorcycle_details.Info_All();
-                                        Console.WriteLine("=====================================================================================================");
+                                        Console.WriteLine("==================================================================================================================");
                                         Console.WriteLine();
                                         Console.WriteLine("Press any key to continue...");
                                         Console.ReadKey();
@@ -242,45 +237,45 @@ namespace Project_PO
                                     }
                                 }
                             } while (!exit_view);
-                        } else if (choice_1 == 3)
+                        } else if (choice_equipment_menager == 3)
                         {
                             bool exit_del = false;
                             int choice_del;
                             do
                             {
                                 Console.Clear();
-                                if (global_id == 0)
+                                if (Bike_List.Count == 0 && Motorcycle_List.Count == 0)
                                 {
                                     Console.Clear();
                                     Console.WriteLine("There is no equipment added yet");
                                     exit_del = true;
                                 }
-                                if (Bike_List_Counter > 0)
+                                if (Bike_List.Count > 0)
                                 {
                                     Console.Clear();
-                                    Console.WriteLine("=====================================================================================================");
+                                    Console.WriteLine("==================================================================================================================");
                                     Console.WriteLine("Available bikes:");
                                     foreach (Bike bike in Bike_List)
                                     {
                                         bike.Info_Short();
                                     }
-                                    Console.WriteLine("=====================================================================================================");
+                                    Console.WriteLine("==================================================================================================================");
                                     Console.WriteLine();
                                     Console.WriteLine();
                                 }
-                                if (Motorcycle_List_Counter > 0)
+                                if (Motorcycle_List.Count > 0)
                                 {
-                                    Console.WriteLine("=====================================================================================================");
+                                    Console.WriteLine("==================================================================================================================");
                                     Console.WriteLine("Available motorcycles:");
                                     foreach (Motorcycle motor in Motorcycle_List)
                                     {
                                         motor.Info_Short();
                                     }
-                                    Console.WriteLine("=====================================================================================================");
+                                    Console.WriteLine("==================================================================================================================");
                                     Console.WriteLine();
                                     Console.WriteLine();
                                 }
-                                if (global_id > 0)
+                                if (Bike_List.Count > 0 || Motorcycle_List.Count > 0)
                                 {
                                     bool found = false;
                                     choice_del = Int_Input_No_Max_Or_Low("Choose ID of equipment you want to delete (enter 0 if you changed your mind): ");
@@ -291,25 +286,33 @@ namespace Project_PO
                                     if (choice_del == 0)
                                     {
                                         Console.Clear();
-                                        exit_del = true;
+                                        exit_del = true; 
                                         continue;
                                     }
                                     else if (bike_to_remove != null)
                                     {
                                         Bike_List.Remove(bike_to_remove);
-                                        global_id--;
-                                        Bike_List_Counter--;
                                         exit_del = true;
                                         Console.Clear();
+                                        if (!bike_to_remove.Can_be_Removed())
+                                        {
+                                            Console.Clear();
+                                            Console.WriteLine("This bike cannot be removed it is already rented");
+                                            continue;
+                                        }
                                         Console.WriteLine("Bike with ID = " + choice_del + " is succesfully removed");
                                     }
                                     else if (motorcycle_to_remove != null)
                                     {
                                         Motorcycle_List.Remove(motorcycle_to_remove);
-                                        global_id--;
                                         exit_del = true;
-                                        Bike_List_Counter--;
                                         Console.Clear();
+                                        if (!motorcycle_to_remove.Can_be_Removed())
+                                        {
+                                            Console.Clear();
+                                            Console.WriteLine("This Motorcycle cannot be removed it is already rented");
+                                            continue;
+                                        }
                                         Console.WriteLine("Motorcycle with ID = " + choice_del + " is succesfully removed");
                                     } else
                                     {
@@ -320,7 +323,7 @@ namespace Project_PO
                                 }
                             } while (!exit_del);
                         }
-                        else if (choice_1 == 0)
+                        else if (choice_equipment_menager == 0)
                         {
                             Console.Clear();
                             continue;
@@ -329,7 +332,7 @@ namespace Project_PO
                     case 2:
                         Console.Clear();
                         
-                        int choice_rent = Int_Input("What action you want to do:\n1. Rent item\n2. Settle rented item\n0. Return\nChoice: ", 0, 2, "Invalid input", "Invalid input");
+                        int choice_rent = Int_Input("What action you want to do:\n1. Rent item\n2. Show all rents\n3. Settle rent\n0. Return\nChoice: ", 0, 3, "Invalid input", "Invalid input");
 
                         if (choice_rent == 0)
                         {
@@ -339,37 +342,37 @@ namespace Project_PO
                         else if (choice_rent == 1)
                         {
                             Console.Clear();
-                            if (global_id == 0)
+                            if (Motorcycle_List.Count == 0 && Bike_List.Count == 0)
                             {
                                 Console.Clear();
                                 Console.WriteLine("There is no equipment added yet");
                             }
-                            if (Bike_List_Counter > 0)
+                            if (Bike_List.Count > 0)
                             {
                                 Console.Clear();
-                                Console.WriteLine("=====================================================================================================");
+                                Console.WriteLine("==================================================================================================================");
                                 Console.WriteLine("Available bikes:");
                                 foreach (Bike bike in Bike_List)
                                 {
                                     bike.Info_Short();
                                 }
-                                Console.WriteLine("=====================================================================================================");
+                                Console.WriteLine("==================================================================================================================");
                                 Console.WriteLine();
                                 Console.WriteLine();
                             }
-                            if (Motorcycle_List_Counter > 0)
+                            if (Motorcycle_List.Count > 0)
                             {
-                                Console.WriteLine("=====================================================================================================");
+                                Console.WriteLine("==================================================================================================================");
                                 Console.WriteLine("Available motorcycles:");
                                 foreach (Motorcycle motor in Motorcycle_List)
                                 {
                                     motor.Info_Short();
                                 }
-                                Console.WriteLine("=====================================================================================================");
+                                Console.WriteLine("==================================================================================================================");
                                 Console.WriteLine();
                                 Console.WriteLine();
                             }
-                            if (global_id > 0)
+                            if (Motorcycle_List.Count > 0 || Bike_List.Count > 0)
                             {
                                 int choice_rent_id = Int_Input_No_Max_Or_Low("Select ID of an item to rent (0 to return): ");
 
@@ -396,12 +399,18 @@ namespace Project_PO
 
                                     Console.Clear();
                                     DateTime e = DateTime_Input("Insert date of return (Input example \"2027-6-15\"): ");
+                                    Console.Clear();
+                                    Console.WriteLine("Bike succesfully rented");
 
                                     Rent_Id++;
+                                    rent_bike.Lendable(false);
                                     Customer new_customer = new Customer(a, b, c, d);
                                     Customer_List.Add(new_customer);
                                     Rent new_rent = new Rent(Rent_Id, new_customer, rent_bike, e);
                                     Rent_List.Add(new_rent);
+
+                                    string json_Bike_Update = JsonSerializer.Serialize(Bike_List, options);
+                                    File.WriteAllText("bike.json", json_Bike_Update);
 
                                     string json_rent = JsonSerializer.Serialize(Rent_List, options);
 
@@ -425,6 +434,7 @@ namespace Project_PO
                                     DateTime e = DateTime_Input("Insert date of return (Input example \"2027-6-15\"): ");
 
                                     Rent_Id++;
+                                    rent_motorcycle.Lendable(false);
                                     Customer new_customer = new Customer(a, b, c, d);
                                     Customer_List.Add(new_customer);
                                     Rent new_rent = new Rent(Rent_Id, new_customer, rent_motorcycle, e);
@@ -432,8 +442,11 @@ namespace Project_PO
 
                                     string json_rent = JsonSerializer.Serialize(Rent_List, options);
 
+                                    string json_Bike_Update = JsonSerializer.Serialize(Bike_List, options);
+                                    File.WriteAllText("bike.json", json_Bike_Update);
+
                                     Console.Clear();
-                                    Console.WriteLine("New customer added to database");
+                                    Console.WriteLine("Bike succesfully rented");
 
                                     File.WriteAllText("rent.json", json_rent);
                                 } else
@@ -442,6 +455,104 @@ namespace Project_PO
                                     Console.WriteLine("Invalid input");
                                     continue;
                                 }
+                            }
+                        } else if (choice_rent == 2)
+                        {
+                            if (Rent_List.Count > 0)
+                            {
+                                foreach (Rent x in Rent_List)
+                                {
+                                    Console.Clear();
+                                    x.Display_Rent();
+                                    Console.WriteLine();
+                                }
+                                Console.WriteLine("Press any key to continue...");
+                                Console.ReadKey();
+                                Console.Clear();
+                            } else
+                            {
+                                Console.Clear();
+                                Console.WriteLine("There are no rents in database");
+                                continue;
+                            }
+                        } else if (choice_rent == 3)
+                        {
+                            if (Rent_List.Count == 0)
+                            {
+                                Console.Clear();
+                                Console.WriteLine("There are no rents in database");
+                                continue;
+                            } else
+                            {
+                                bool exit_settle = false;
+
+                                do
+                                {
+                                    Console.Clear();
+                                    foreach (Rent x in Rent_List)
+                                    {
+                                        Console.Clear();
+                                        x.Display_Rent();
+                                        Console.WriteLine();
+                                    }
+                                    int choice_settle = Int_Input_No_Max_Or_Low("Enter the Id of rent you want to settle or 0 to cancel: ");
+
+                                    if (choice_settle == 0)
+                                    {
+                                        Console.Clear();
+                                        exit_settle = true;
+                                        continue;
+                                    }
+
+                                    Rent rent_settle = Rent_List.FirstOrDefault(b => b.Id == choice_settle);
+
+                                    if (Rent_List.FirstOrDefault(b => b.Id == choice_settle) == null)
+                                    {
+                                        Console.Clear();
+                                        exit_settle = true;
+                                        Console.WriteLine("There are no rents with ID: " + choice_settle);
+                                        continue;
+                                    }
+                                    else if (Rent_List.FirstOrDefault(b => b.Id == choice_settle) != null)
+                                    {
+
+                                        int id_of_settled_item = rent_settle.Rented_Item.Id;
+
+                                        Bike a = Bike_List.FirstOrDefault(b => b.Id == id_of_settled_item);
+
+                                        Motorcycle b = Motorcycle_List.FirstOrDefault(b => b.Id == id_of_settled_item);
+
+                                        if (a != null)
+                                        {
+                                            a.Lendable(true);
+                                        }
+                                        if (b != null)
+                                        {
+                                            b.Lendable(true);
+                                        }
+
+
+                                        Rent_List.Remove(rent_settle);
+
+                                        string json_return = JsonSerializer.Serialize(Rent_List, options);
+
+                                        File.WriteAllText("rent.json", json_return);
+
+                                        string json_return_bike = JsonSerializer.Serialize(Bike_List, options);
+
+                                        File.WriteAllText("bike.json", json_return_bike);
+
+                                        string json_return_motorcycle = JsonSerializer.Serialize(Motorcycle_List, options);
+
+                                        File.WriteAllText("motorcycle.json", json_return_motorcycle);
+
+
+                                        Console.Clear();
+                                        Console.WriteLine("Rent succesfully settled");
+                                        exit_settle = true;
+                                    }
+                                } while (!exit_settle);
+
                             }
                         }
                             break;

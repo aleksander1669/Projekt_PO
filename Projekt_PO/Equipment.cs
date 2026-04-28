@@ -30,31 +30,39 @@ namespace Projekt_PO
             Price = price;
             Deposit = deposit;
         }
+        public bool Can_be_Removed()
+        {
+            return Lend;
+        }
+        public virtual void Lendable(bool x)
+        {
+            Lend = x;
+        }
         public virtual void Info_Short()
         {
             string x = string.Empty;
             if (Lend)
             {
-                x = "Yes";
+                x = "Can be rented";
             }
             else
             {
-                x = "No";
+                x = "Already rented";
             }
-            Console.WriteLine("=====================================================================================================");
-            Console.WriteLine("|| ID: " + Id + "|| Type/Name of Equipment: " + Type + "|| Lendable: " + x + "|| Price per day: " + Price + " zł + Deposit: " + Deposit + " zł ||");
+            Console.WriteLine("==================================================================================================================");
+            Console.WriteLine("|| ID: " + Id + "|| Type/Name of Equipment: " + Type + "|| Rent status: " + x + "|| Price per day: " + Price + " zł + Deposit: " + Deposit + " zł ||");
         }
         public virtual void Info_All()
         {
             string x = string.Empty;
             if (Lend)
             {
-                x = "Yes";
+                x = "Can be rented";
             } else
             {
-                x = "No";
+                x = "Already rented";
             }
-            Console.WriteLine("=====================================================================================================");
+            Console.WriteLine("==================================================================================================================");
             Console.WriteLine("* ID: " + Id);
             Console.WriteLine("* Name/Type: " + Type);
             Console.WriteLine("* Added: " + Time);
@@ -77,6 +85,10 @@ namespace Projekt_PO
     public Bike(int Id, string Type, DateTime Time, bool Lend, double Price, double Deposit, string maintenance) : base(Id, Type, Time, Lend, Price, Deposit)
         {
             Maintenance = maintenance;
+        }
+        public override void Lendable(bool x)
+        {
+            base.Lendable(x);
         }
         public override double Count_Cost(int days)
         {
@@ -105,6 +117,10 @@ namespace Projekt_PO
             Inspection = inspection;
             Plate = plate;
             Oil = oil;
+        }
+        public override void Lendable(bool x)
+        {
+            base.Lendable(x);
         }
         public override void Info_Short()
         {
@@ -139,6 +155,12 @@ namespace Projekt_PO
             Phone = phone;
             Identification = identification;
         }
+        public void Display() {
+            Console.WriteLine("Name: " + Name);
+            Console.WriteLine("Surename: " + Surename);
+            Console.WriteLine("Phone number: " + Phone);
+            Console.WriteLine("Identification number: " + Identification);
+        }
     }
     public class Rent
     {
@@ -155,6 +177,22 @@ namespace Projekt_PO
             Rented_Item = rented_item;
             Rental_Date = DateTime.Now;
             Rental_Till = rental_till;
+        }
+        public void Return()
+        {
+            Rented_Item.Lendable(true);
+        }
+        public void Display_Rent()
+        {
+            Console.WriteLine("-----------------------------------------------Customer Information-----------------------------------------------");
+            Console.WriteLine("ID: " + Id);
+            Renter.Display();
+            Console.WriteLine("Rented at : " + Rental_Date);
+            Console.WriteLine("Rent till: " + Rental_Till);
+            Console.WriteLine();
+            Console.WriteLine("Rented item:");
+            Rented_Item.Info_Short();
+            Console.WriteLine("==================================================================================================================");
         }
     }
 }
