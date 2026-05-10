@@ -21,7 +21,6 @@ namespace Project_PO
             List<Bike> Bike_List = new List<Bike>();
             List<Motorcycle> Motorcycle_List = new List<Motorcycle>();
             List<Rent> Rent_List = new List<Rent>();
-            List<Customer> Customer_List = new List<Customer>();
             var options = new JsonSerializerOptions { WriteIndented = true };
             
             if (File.Exists("rent.json"))
@@ -277,7 +276,6 @@ namespace Project_PO
                                 }
                                 if (Bike_List.Count > 0 || Motorcycle_List.Count > 0)
                                 {
-                                    bool found = false;
                                     choice_del = Int_Input_No_Max_Or_Low("Choose ID of equipment you want to delete (enter 0 if you changed your mind): ");
 
                                     Bike bike_to_remove = Bike_List.FirstOrDefault(b => b.Id == choice_del);
@@ -291,7 +289,6 @@ namespace Project_PO
                                     }
                                     else if (bike_to_remove != null)
                                     {
-                                        Bike_List.Remove(bike_to_remove);
                                         exit_del = true;
                                         Console.Clear();
                                         if (!bike_to_remove.Can_be_Removed())
@@ -300,11 +297,11 @@ namespace Project_PO
                                             Console.WriteLine("This bike cannot be removed it is already rented");
                                             continue;
                                         }
+                                        Bike_List.Remove(bike_to_remove);
                                         Console.WriteLine("Bike with ID = " + choice_del + " is succesfully removed");
                                     }
                                     else if (motorcycle_to_remove != null)
                                     {
-                                        Motorcycle_List.Remove(motorcycle_to_remove);
                                         exit_del = true;
                                         Console.Clear();
                                         if (!motorcycle_to_remove.Can_be_Removed())
@@ -313,6 +310,7 @@ namespace Project_PO
                                             Console.WriteLine("This Motorcycle cannot be removed it is already rented");
                                             continue;
                                         }
+                                        Motorcycle_List.Remove(motorcycle_to_remove);
                                         Console.WriteLine("Motorcycle with ID = " + choice_del + " is succesfully removed");
                                     } else
                                     {
@@ -405,8 +403,7 @@ namespace Project_PO
                                     Rent_Id++;
                                     rent_bike.Lendable(false);
                                     Customer new_customer = new Customer(a, b, c, d);
-                                    Customer_List.Add(new_customer);
-                                    Rent new_rent = new Rent(Rent_Id, new_customer, rent_bike, e);
+                                    Rent new_rent = new Rent(Rent_Id, new_customer, rent_bike, DateTime.Now, e);
                                     Rent_List.Add(new_rent);
 
                                     string json_Bike_Update = JsonSerializer.Serialize(Bike_List, options);
@@ -436,14 +433,13 @@ namespace Project_PO
                                     Rent_Id++;
                                     rent_motorcycle.Lendable(false);
                                     Customer new_customer = new Customer(a, b, c, d);
-                                    Customer_List.Add(new_customer);
-                                    Rent new_rent = new Rent(Rent_Id, new_customer, rent_motorcycle, e);
+                                    Rent new_rent = new Rent(Rent_Id, new_customer, rent_motorcycle, DateTime.Now, e);
                                     Rent_List.Add(new_rent);
 
                                     string json_rent = JsonSerializer.Serialize(Rent_List, options);
 
-                                    string json_Bike_Update = JsonSerializer.Serialize(Bike_List, options);
-                                    File.WriteAllText("bike.json", json_Bike_Update);
+                                    string json_Motorcycle_1 = JsonSerializer.Serialize(Motorcycle_List, options);
+                                    File.WriteAllText("motorcycle.json", json_Motorcycle_1);
 
                                     Console.Clear();
                                     Console.WriteLine("Bike succesfully rented");
@@ -462,7 +458,6 @@ namespace Project_PO
                             {
                                 foreach (Rent x in Rent_List)
                                 {
-                                    Console.Clear();
                                     x.Display_Rent();
                                     Console.WriteLine();
                                 }
@@ -491,7 +486,6 @@ namespace Project_PO
                                     Console.Clear();
                                     foreach (Rent x in Rent_List)
                                     {
-                                        Console.Clear();
                                         x.Display_Rent();
                                         Console.WriteLine();
                                     }
@@ -506,14 +500,14 @@ namespace Project_PO
 
                                     Rent rent_settle = Rent_List.FirstOrDefault(b => b.Id == choice_settle);
 
-                                    if (Rent_List.FirstOrDefault(b => b.Id == choice_settle) == null)
+                                    if (rent_settle == null)
                                     {
                                         Console.Clear();
                                         exit_settle = true;
                                         Console.WriteLine("There are no rents with ID: " + choice_settle);
                                         continue;
                                     }
-                                    else if (Rent_List.FirstOrDefault(b => b.Id == choice_settle) != null)
+                                    else
                                     {
 
                                         int id_of_settled_item = rent_settle.Rented_Item.Id;
