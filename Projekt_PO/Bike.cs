@@ -13,22 +13,5 @@ namespace Projekt_PO
         {
             Maintenance = maintenance;
         }
-        public override void Lendable(bool x)
-        {
-            base.Lendable(x);
-        }
-        public override double Count_Cost(int days)
-        {
-            return base.Count_Cost(days);
-        }
-        public override void Info_Short()
-        {
-            base.Info_Short();
-        }
-        public override void Info_All()
-        {
-            base.Info_All();
-            Console.WriteLine("* Maintenance: " + Maintenance);
-        }
     }
 }
