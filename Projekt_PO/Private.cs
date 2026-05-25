@@ -6,8 +6,8 @@ namespace Projekt_PO
 {
     public class Private : Customer
     {
-        private string surename;
-        private string identification;
+        public string surename {  get; private set; }
+        public string identification { get; private set; }
 
         public Private(string Name, string Phone, string Surename, string Identification) : base(Name, Phone)
         {

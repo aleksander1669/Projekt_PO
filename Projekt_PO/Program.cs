@@ -6,9 +6,11 @@ using System.Diagnostics.Metrics;
 using System.IO;
 using System.Numerics;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json;
 using System.Timers;
+using System.Xml.Linq;
 
 namespace Project_PO
 {
@@ -24,28 +26,30 @@ namespace Project_PO
             List<Car> Car_List = new List<Car>();
             List<Rent> Rent_List = new List<Rent>();
             var options = new JsonSerializerOptions { WriteIndented = true };
-            
+
             if (File.Exists("rent.json"))
             {
                 string loaded_rent = File.ReadAllText("rent.json");
                 Rent_List = JsonSerializer.Deserialize<List<Rent>>(loaded_rent);
             }
+            else { }
             if (File.Exists("bike.json"))
             {
                 string json_loaded = File.ReadAllText("bike.json");
                 Bike_List = JsonSerializer.Deserialize<List<Bike>>(json_loaded);
             }
+            else { }
             if (File.Exists("motorcycle.json"))
             {
                 string json_loaded = File.ReadAllText("motorcycle.json");
                 Motorcycle_List = JsonSerializer.Deserialize<List<Motorcycle>>(json_loaded);
-            }
+            } else { }
             if (File.Exists("car.json"))
             {
                 string json_loaded = File.ReadAllText("car.json");
                 Car_List = JsonSerializer.Deserialize<List<Car>>(json_loaded);
 
-            }
+            } else { }
             int Rent_Id = 0;
             int Max_Id = 0;
             if (Bike_List.Count > 0)
@@ -56,7 +60,7 @@ namespace Project_PO
                 Max_Id = Math.Max(Max_Id, Car_List.Max(b => b.id));
 
             if (Rent_List.Count > 0)
-                Rent_Id = Rent_List.Max(r => r.Id);
+                Rent_Id = Rent_List.Max(r => r.id);
 
 
 
@@ -213,7 +217,7 @@ namespace Project_PO
                             do
                             {
                                 Console.Clear();
-                                if (Bike_List.Count == 0 && Motorcycle_List.Count == 0)
+                                if (Bike_List.Count == 0 && Motorcycle_List.Count == 0 && Car_List.Count == 0)
                                 {
                                     Console.Clear();
                                     Console.WriteLine("There is no equipment added yet");
@@ -244,12 +248,25 @@ namespace Project_PO
                                     Console.WriteLine();
                                     Console.WriteLine();
                                 }
-                                if (Bike_List.Count > 0 || Motorcycle_List.Count > 0)
+                                if (Car_List.Count > 0)
+                                {
+                                    Console.WriteLine("==================================================================================================================");
+                                    Console.WriteLine("Available Cars:");
+                                    foreach (Car car in Car_List)
+                                    {
+                                        car.Info_Short();
+                                    }
+                                    Console.WriteLine("==================================================================================================================");
+                                    Console.WriteLine();
+                                    Console.WriteLine(); 
+                                }
+                                if (Bike_List.Count > 0 || Motorcycle_List.Count > 0 || Car_List.Count > 0)
                                 {
                                     choice_view = Int_Input_No_Max_Or_Low("Select ID of an item to see details or enter 0 to exit: ");
                                     
-                                    Bike bike_details = Bike_List.FirstOrDefault(b => b.Id == choice_view);
-                                    Motorcycle motorcycle_details = Motorcycle_List.FirstOrDefault(b => b.Id == choice_view);
+                                    Bike bike_details = Bike_List.FirstOrDefault(b => b.id == choice_view);
+                                    Motorcycle motorcycle_details = Motorcycle_List.FirstOrDefault(b => b.id == choice_view);
+                                    Car car_details = Car_List.FirstOrDefault(b => b.id == choice_view);
 
                                     if (choice_view == 0)
                                     {
@@ -259,7 +276,7 @@ namespace Project_PO
                                     } else if (bike_details != null)
                                     {
                                         Console.Clear();
-                                        bike_details.Info_All();
+                                        bike_details.Info_Full();
                                         Console.WriteLine("==================================================================================================================");
                                         Console.WriteLine();
                                         Console.WriteLine("Press any key to continue...");
@@ -270,7 +287,18 @@ namespace Project_PO
                                     } else if (motorcycle_details != null)
                                     {
                                         Console.Clear();
-                                        motorcycle_details.Info_All();
+                                        motorcycle_details.Info_Full();
+                                        Console.WriteLine("==================================================================================================================");
+                                        Console.WriteLine();
+                                        Console.WriteLine("Press any key to continue...");
+                                        Console.ReadKey();
+                                        Console.Clear();
+                                        exit_view = true;
+                                        continue;
+                                    } else if (car_details != null)
+                                    {
+                                        Console.Clear();
+                                        car_details.Info_Full();
                                         Console.WriteLine("==================================================================================================================");
                                         Console.WriteLine();
                                         Console.WriteLine("Press any key to continue...");
@@ -293,7 +321,7 @@ namespace Project_PO
                             do
                             {
                                 Console.Clear();
-                                if (Bike_List.Count == 0 && Motorcycle_List.Count == 0)
+                                if (Bike_List.Count == 0 && Motorcycle_List.Count == 0 && Car_List.Count == 0)
                                 {
                                     Console.Clear();
                                     Console.WriteLine("There is no equipment added yet");
@@ -324,12 +352,25 @@ namespace Project_PO
                                     Console.WriteLine();
                                     Console.WriteLine();
                                 }
-                                if (Bike_List.Count > 0 || Motorcycle_List.Count > 0)
+                                if (Car_List.Count > 0)
+                                {
+                                    Console.WriteLine("==================================================================================================================");
+                                    Console.WriteLine("Available cars: ");
+                                    foreach (Car car in Car_List)
+                                    {
+                                        car.Info_Short();
+                                    }
+                                    Console.WriteLine("==================================================================================================================");
+                                    Console.WriteLine();
+                                    Console.WriteLine();
+                                }
+                                if (Bike_List.Count > 0 || Motorcycle_List.Count > 0 || Car_List.Count > 0)
                                 {
                                     choice_del = Int_Input_No_Max_Or_Low("Choose ID of equipment you want to delete (enter 0 if you changed your mind): ");
 
-                                    Bike bike_to_remove = Bike_List.FirstOrDefault(b => b.Id == choice_del);
-                                    Motorcycle motorcycle_to_remove = Motorcycle_List.FirstOrDefault(b => b.Id == choice_del);
+                                    Bike bike_to_remove = Bike_List.FirstOrDefault(b => b.id == choice_del);
+                                    Motorcycle motorcycle_to_remove = Motorcycle_List.FirstOrDefault(b => b.id == choice_del);
+                                    Car car_to_remove = Car_List.FirstOrDefault(b => b.id == choice_del);
 
                                     if (choice_del == 0)
                                     {
@@ -341,7 +382,7 @@ namespace Project_PO
                                     {
                                         exit_del = true;
                                         Console.Clear();
-                                        if (!bike_to_remove.Can_be_Removed())
+                                        if (!bike_to_remove.Can_Be_Removed())
                                         {
                                             Console.Clear();
                                             Console.WriteLine("This bike cannot be removed it is already rented");
@@ -354,7 +395,7 @@ namespace Project_PO
                                     {
                                         exit_del = true;
                                         Console.Clear();
-                                        if (!motorcycle_to_remove.Can_be_Removed())
+                                        if (!motorcycle_to_remove.Can_Be_Removed())
                                         {
                                             Console.Clear();
                                             Console.WriteLine("This Motorcycle cannot be removed it is already rented");
@@ -362,6 +403,19 @@ namespace Project_PO
                                         }
                                         Motorcycle_List.Remove(motorcycle_to_remove);
                                         Console.WriteLine("Motorcycle with ID = " + choice_del + " is succesfully removed");
+                                    } else if (car_to_remove != null)
+                                    {
+                                        exit_del = true;
+                                        Console.Clear();
+                                        if (!car_to_remove.Can_Be_Removed())
+                                        {
+                                            Console.Clear();
+                                            Console.WriteLine("This car canot be removed it is already rented");
+                                            continue;
+                                        }
+                                        Car_List.Remove(car_to_remove);
+                                        Console.WriteLine($"Car with ID = {choice_del} is succesfully removed");
+
                                     } else
                                     {
                                         Console.Clear();
@@ -390,10 +444,10 @@ namespace Project_PO
                         else if (choice_rent == 1)
                         {
                             Console.Clear();
-                            if (Motorcycle_List.Count == 0 && Bike_List.Count == 0)
+                            if (Motorcycle_List.Count == 0 && Bike_List.Count == 0 && Car_List.Count == 0)
                             {
                                 Console.Clear();
-                                Console.WriteLine("There is no equipment added yet");
+                                Console.WriteLine("There is no equipment added yet to rent");
                             }
                             if (Bike_List.Count > 0)
                             {
@@ -420,86 +474,158 @@ namespace Project_PO
                                 Console.WriteLine();
                                 Console.WriteLine();
                             }
-                            if (Motorcycle_List.Count > 0 || Bike_List.Count > 0)
+                            if (Car_List.Count > 0)
+                            {
+                                Console.WriteLine("==================================================================================================================");
+                                Console.WriteLine("Available car:");
+                                foreach (Car car in Car_List)
+                                {
+                                    car.Info_Short();
+                                }
+                                Console.WriteLine("==================================================================================================================");
+                                Console.WriteLine();
+                                Console.WriteLine();
+                            }
+                            if (Motorcycle_List.Count > 0 || Bike_List.Count > 0 || Car_List.Count > 0)
                             {
                                 int choice_rent_id = Int_Input_No_Max_Or_Low("Select ID of an item to rent (0 to return): ");
 
-                                Bike rent_bike = Bike_List.FirstOrDefault(b => b.Id == choice_rent_id);
-                                Motorcycle rent_motorcycle = Motorcycle_List.FirstOrDefault(b => b.Id == choice_rent_id);
+                                Bike rent_bike = Bike_List.FirstOrDefault(b => b.id == choice_rent_id);
+                                Motorcycle rent_motorcycle = Motorcycle_List.FirstOrDefault(b => b.id == choice_rent_id);
+                                Car rent_car = Car_List.FirstOrDefault(b => b.id == choice_rent_id);
 
                                 if (choice_rent_id == 0)
                                 {
                                     Console.Clear();
                                     continue;
-                                } else if (rent_bike != null)
+                                }
+                                if (rent_bike == null && rent_motorcycle == null && rent_car == null)
                                 {
                                     Console.Clear();
-                                    string a = String_Input_No_Digits("Enter customer's name: ");
-
-                                    Console.Clear();
-                                    string b = String_Input_No_Digits("Enter customer's surename: ");
-
-                                    Console.Clear();
-                                    int c = Int_Input_Lenght("Enter customer's phone: ", 9, "Nuber needs to contain 9 digits");
-
-                                    Console.Clear();
-                                    string d = String_Input_No_Digits_Lenght("Enter customer's identification number: ", 11, "This number has to contain 11 digits");
-
-                                    Console.Clear();
-                                    DateTime e = DateTime_Input("Insert date of return (Input example \"2027-6-15\"): ");
-                                    Console.Clear();
-                                    Console.WriteLine("Bike succesfully rented");
-
-                                    Rent_Id++;
-                                    rent_bike.Lendable(false);
-                                    Customer new_customer = new Customer(a, b, c, d);
-                                    Rent new_rent = new Rent(Rent_Id, new_customer, rent_bike, DateTime.Now, e);
-                                    Rent_List.Add(new_rent);
-
-                                    string json_Bike_Update = JsonSerializer.Serialize(Bike_List, options);
-                                    File.WriteAllText("bike.json", json_Bike_Update);
-
-                                    string json_rent = JsonSerializer.Serialize(Rent_List, options);
-
-                                    File.WriteAllText("rent.json", json_rent);
-
-                                } else if (rent_motorcycle != null)
-                                {
-                                    Console.Clear();
-                                    string a = String_Input_No_Digits("Enter customer's name: ");
-
-                                    Console.Clear();
-                                    string b = String_Input_No_Digits("Enter customer's surename: ");
-
-                                    Console.Clear();
-                                    int c = Int_Input_Lenght("Enter customer's phone: ", 9, "Nuber needs to contain 9 digits");
-
-                                    Console.Clear();
-                                    string d = String_Input_No_Digits_Lenght("Enter customer's identification number: ", 11, "This number has to contain 11 digits");
-
-                                    Console.Clear();
-                                    DateTime e = DateTime_Input("Insert date of return (Input example \"2027-6-15\"): ");
-
-                                    Rent_Id++;
-                                    rent_motorcycle.Lendable(false);
-                                    Customer new_customer = new Customer(a, b, c, d);
-                                    Rent new_rent = new Rent(Rent_Id, new_customer, rent_motorcycle, DateTime.Now, e);
-                                    Rent_List.Add(new_rent);
-
-                                    string json_rent = JsonSerializer.Serialize(Rent_List, options);
-
-                                    string json_Motorcycle_1 = JsonSerializer.Serialize(Motorcycle_List, options);
-                                    File.WriteAllText("motorcycle.json", json_Motorcycle_1);
-
-                                    Console.Clear();
-                                    Console.WriteLine("Bike succesfully rented");
-
-                                    File.WriteAllText("rent.json", json_rent);
-                                } else
-                                {
-                                    Console.Clear();
-                                    Console.WriteLine("Invalid input");
+                                    Console.WriteLine("No matching id's found");
                                     continue;
+                                }
+
+                                Console.Clear();
+                                int choice_rent_type = Int_Input("What type of rent your interested in:\n1. Private rent\n2. For a Company\n0. Return\nChoice: ", 0, 2, "Invalid choice", "Invalid choice");
+
+                                if (choice_rent_type == 0)
+                                {
+                                    Console.Clear();
+                                    continue;
+                                } 
+                                if (choice_rent_type == 1)
+                                {
+                                    Console.Clear();
+                                    string name = String_Input_No_Digits("Enter your name: ");
+
+                                    Console.Clear();
+                                    string surename = String_Input_No_Digits("Enter your surename: ");
+
+                                    Console.Clear();
+                                    string phone = String_Input_Lenght("Enter your phone number: ", 9, "Phone number needs to contain 9 digits");
+
+                                    Console.Clear();
+                                    string identification = String_Input_Lenght("Enter your identification number: ", 11, "Your identification number needs to contain 11 digits");
+
+                                    Private rent_customer = new Private(name, phone, surename, identification);
+                                    if (rent_bike != null)
+                                    {
+                                        Rent_Id++;
+                                        DateTime rental_till = DateTime_Input("Enter date of return: ");
+                                        rent_bike.Status_Change(true);
+                                        Rent new_rent = new Rent(Rent_Id, rent_customer, rent_bike, teraz, rental_till);
+                                        Console.Clear();
+                                        Console.WriteLine("Your bike is rented succesfully");
+                                        Rent_List.Add(new_rent);
+                                        string json_rent_list = JsonSerializer.Serialize(Rent_List, options);
+                                        string json_bike_list = JsonSerializer.Serialize(Bike_List, options);
+                                        File.WriteAllText("rent.json", json_rent_list);
+                                        File.WriteAllText("bike.json", json_bike_list);
+                                    }
+                                    if (rent_motorcycle != null)
+                                    {
+                                        Rent_Id++;
+                                        DateTime rental_till = DateTime_Input("Enter date of return: ");
+                                        rent_motorcycle.Status_Change(true);
+                                        Rent new_rent = new Rent(Rent_Id, rent_customer, rent_motorcycle, teraz, rental_till);
+                                        Console.Clear();
+                                        Console.WriteLine("Your motorcycle is rented succesfully");
+                                        Rent_List.Add(new_rent);
+                                        string json_rent_list = JsonSerializer.Serialize(Rent_List, options);
+                                        string json_motorcycle_list = JsonSerializer.Serialize(Motorcycle_List, options);
+                                        File.WriteAllText("rent.json", json_rent_list);
+                                        File.WriteAllText("motorcycle.json", json_motorcycle_list);
+                                    }
+                                    if (rent_car != null)
+                                    {
+                                        Rent_Id++;
+                                        DateTime rental_till = DateTime_Input("Enter date of return: ");
+                                        rent_car.Status_Change(true);
+                                        Rent new_rent = new Rent(Rent_Id, rent_customer, rent_car, teraz, rental_till);
+                                        Console.Clear();
+                                        Console.WriteLine("Your car is rented succesfully");
+                                        Rent_List.Add(new_rent);
+                                        string json_rent_list = JsonSerializer.Serialize(Rent_List, options);
+                                        string json_car_list = JsonSerializer.Serialize(Car_List, options);
+                                        File.WriteAllText("rent.json", json_rent_list);
+                                        File.WriteAllText("car.json", json_car_list);
+                                    }
+                                }
+                                if (choice_rent_type == 2)
+                                {
+                                    Console.Clear();
+                                    string name = String_Input_No_Digits("Enter name of your company: ");
+
+                                    Console.Clear();
+                                    string phone = String_Input_Lenght("Enter your phone number: ", 9, "Phone number needs to contain 9 digits");
+
+                                    Console.Clear();
+                                    string nip = String_Input_Lenght("Enter your identification number: ", 10, "Your nip number needs to contain 10 digits");
+
+                                    Company rent_customer = new Company(name, phone, nip);
+                                    if (rent_bike != null)
+                                    {
+                                        Rent_Id++;
+                                        DateTime rental_till = DateTime_Input("Enter date of return: ");
+                                        rent_bike.Status_Change(true);
+                                        Rent new_rent = new Rent(Rent_Id, rent_customer, rent_bike, teraz, rental_till);
+                                        Console.Clear();
+                                        Console.WriteLine("Your bike is rented succesfully");
+                                        Rent_List.Add(new_rent);
+                                        string json_rent_list = JsonSerializer.Serialize(Rent_List, options);
+                                        string json_bike_list = JsonSerializer.Serialize(Bike_List, options);
+                                        File.WriteAllText("rent.json", json_rent_list);
+                                        File.WriteAllText("bike.json", json_bike_list);
+                                    }
+                                    if (rent_motorcycle != null)
+                                    {
+                                        Rent_Id++;
+                                        DateTime rental_till = DateTime_Input("Enter date of return: ");
+                                        rent_motorcycle.Status_Change(true);
+                                        Rent new_rent = new Rent(Rent_Id, rent_customer, rent_motorcycle, teraz, rental_till);
+                                        Console.Clear();
+                                        Console.WriteLine("Your motorcycle is rented succesfully");
+                                        Rent_List.Add(new_rent);
+                                        string json_rent_list = JsonSerializer.Serialize(Rent_List, options);
+                                        string json_motorcycle_list = JsonSerializer.Serialize(Motorcycle_List, options);
+                                        File.WriteAllText("rent.json", json_rent_list);
+                                        File.WriteAllText("motorcycle.json", json_motorcycle_list);
+                                    }
+                                    if (rent_car != null)
+                                    {
+                                        Rent_Id++;
+                                        DateTime rental_till = DateTime_Input("Enter date of return: ");
+                                        rent_car.Status_Change(true);
+                                        Rent new_rent = new Rent(Rent_Id, rent_customer, rent_car, teraz, rental_till);
+                                        Console.Clear();
+                                        Console.WriteLine("Your car is rented succesfully");
+                                        Rent_List.Add(new_rent);
+                                        string json_rent_list = JsonSerializer.Serialize(Rent_List, options);
+                                        string json_car_list = JsonSerializer.Serialize(Car_List, options);
+                                        File.WriteAllText("rent.json", json_rent_list);
+                                        File.WriteAllText("car.json", json_car_list);
+                                    }
                                 }
                             }
                         } else if (choice_rent == 2)
@@ -508,7 +634,7 @@ namespace Project_PO
                             {
                                 foreach (Rent x in Rent_List)
                                 {
-                                    x.Display_Rent();
+                                    x.Display();
                                     Console.WriteLine();
                                 }
                                 Console.WriteLine("Press any key to continue...");
@@ -536,7 +662,7 @@ namespace Project_PO
                                     Console.Clear();
                                     foreach (Rent x in Rent_List)
                                     {
-                                        x.Display_Rent();
+                                        x.Display();
                                         Console.WriteLine();
                                     }
                                     int choice_settle = Int_Input_No_Max_Or_Low("Enter the Id of rent you want to settle or 0 to cancel: ");
@@ -548,7 +674,7 @@ namespace Project_PO
                                         continue;
                                     }
 
-                                    Rent rent_settle = Rent_List.FirstOrDefault(b => b.Id == choice_settle);
+                                    Rent rent_settle = Rent_List.FirstOrDefault(b => b.id == choice_settle);
 
                                     if (rent_settle == null)
                                     {
@@ -560,21 +686,8 @@ namespace Project_PO
                                     else
                                     {
 
-                                        int id_of_settled_item = rent_settle.Rented_Item.Id;
-
-                                        Bike a = Bike_List.FirstOrDefault(b => b.Id == id_of_settled_item);
-
-                                        Motorcycle b = Motorcycle_List.FirstOrDefault(b => b.Id == id_of_settled_item);
-
-                                        if (a != null)
-                                        {
-                                            a.Lendable(true);
-                                        }
-                                        if (b != null)
-                                        {
-                                            b.Lendable(true);
-                                        }
-
+                                        Console.Clear();
+                                        rent_settle.Settle();
 
                                         Rent_List.Remove(rent_settle);
 
@@ -590,9 +703,10 @@ namespace Project_PO
 
                                         File.WriteAllText("motorcycle.json", json_return_motorcycle);
 
+                                        string json_return_car = JsonSerializer.Serialize(Car_List, options);
 
-                                        Console.Clear();
-                                        Console.WriteLine("Rent succesfully settled");
+                                        File.WriteAllText("car.json", json_return_car);
+
                                         exit_settle = true;
                                     }
                                 } while (!exit_settle);
@@ -608,6 +722,10 @@ namespace Project_PO
 
                         string json_Motorcycle = JsonSerializer.Serialize(Motorcycle_List, options);
                         File.WriteAllText("motorcycle.json", json_Motorcycle);
+
+                        string json_car = JsonSerializer.Serialize(Car_List, options);
+
+                        File.WriteAllText("car.json", json_car);
 
                         Console.Clear();
                         Console.WriteLine("Saving all changes...");
@@ -881,6 +999,34 @@ namespace Project_PO
                     Console.Clear();
                     Console.WriteLine("Something went wrong");
                     fine = false;
+                }
+            } while (!fine);
+            return x;
+        }
+        static string String_Input_Lenght(string message, int lenght, string message_lenght)
+        {
+            bool fine = true;
+            string x = null;
+
+            do
+            {
+                fine = true;
+                Console.Write(message);
+                x = String_Input(message);
+                int z = x.Length;
+                if (z != lenght)
+                {
+                    Console.Clear();
+                    fine = false;
+                    Console.WriteLine(message_lenght);
+                } else if (x == string.Empty)
+                {
+                    Console.Clear();
+                    fine = false;
+                    Console.WriteLine("This blank cannot be empty");
+                } else
+                {
+                    fine = true;
                 }
             } while (!fine);
             return x;

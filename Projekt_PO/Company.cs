@@ -6,7 +6,7 @@ namespace Projekt_PO
 {
     public class Company : Customer
     {
-        private string nip;
+        public string nip {  get; private set; }
         public Company(string Name, string Phone, string Nip) : base(Name, Phone)
         {
             nip = Nip;

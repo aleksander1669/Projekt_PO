@@ -15,6 +15,7 @@ namespace Projekt_PO
         void Info_Short();
         void Info_Full();
         bool Can_Be_Removed();
+        void Status_Change(bool change);
     }
     [JsonDerivedType(typeof(Bike), typeDiscriminator: "bike")]
     [JsonDerivedType(typeof(Combustion_Vehicle), typeDiscriminator: "combustion")]
@@ -48,7 +49,7 @@ namespace Projekt_PO
             {
                 x = "not rented";
             }
-            Console.WriteLine($"|| ID: {id} | Name: {name} | Status: {x} | Added: {time}");
+            Console.WriteLine($"|| ID: {id} | Name: {name} | Status: {x} | Added: {time} ||");
         }
         public virtual void Info_Full()
         {
@@ -75,6 +76,10 @@ namespace Projekt_PO
             {
                 return true;
             }
+        }
+        public void Status_Change(bool change)
+        {
+            rented = change;
         }
     }
 }
