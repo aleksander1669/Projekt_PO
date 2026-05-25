@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics.Metrics;
 using System.IO;
+using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -20,6 +21,7 @@ namespace Project_PO
             DateTime teraz = DateTime.Now;
             List<Bike> Bike_List = new List<Bike>();
             List<Motorcycle> Motorcycle_List = new List<Motorcycle>();
+            List<Car> Car_List = new List<Car>();
             List<Rent> Rent_List = new List<Rent>();
             var options = new JsonSerializerOptions { WriteIndented = true };
             
@@ -38,43 +40,27 @@ namespace Project_PO
                 string json_loaded = File.ReadAllText("motorcycle.json");
                 Motorcycle_List = JsonSerializer.Deserialize<List<Motorcycle>>(json_loaded);
             }
+            if (File.Exists("car.json"))
+            {
+                string json_loaded = File.ReadAllText("car.json");
+                Car_List = JsonSerializer.Deserialize<List<Car>>(json_loaded);
+
+            }
             int Rent_Id = 0;
             int Max_Id = 0;
-            int Max_Id_Bike = 0;
-            int Max_Id_Motorcycle = 0;
+            if (Bike_List.Count > 0)
+                Max_Id = Math.Max(Max_Id, Bike_List.Max(b => b.id));
+            if (Motorcycle_List.Count > 0)
+                Max_Id = Math.Max(Max_Id, Motorcycle_List.Max(b => b.id));
+            if (Car_List.Count > 0)
+                Max_Id = Math.Max(Max_Id, Car_List.Max(b => b.id));
 
-            if (Bike_List.Count == 0)
-            {
-                Max_Id_Bike = 0;
-            } else
-            {
-                Max_Id_Bike = Bike_List.Max(b => b.Id);
-            }
-            if (Motorcycle_List.Count == 0)
-            {
-                Max_Id_Motorcycle = 0;
-            }
-            else
-            {
-                Max_Id_Motorcycle = Motorcycle_List.Max(b => b.Id);
-            }
+            if (Rent_List.Count > 0)
+                Rent_Id = Rent_List.Max(r => r.Id);
 
-            if (Max_Id_Bike > Max_Id_Motorcycle)
-            {
-                Max_Id = Max_Id_Bike;
-            } else
-            {
-                Max_Id = Max_Id_Motorcycle;
-            }
 
-            if (Rent_List.Count == 0)
-            {
-                Rent_Id = 0;
-            }
-            else
-            {
-                Rent_Id = Rent_List.Max(b =>b.Id);
-            }
+
+
 
             Console.WriteLine("Welcome to our program!");
 
@@ -90,7 +76,7 @@ namespace Project_PO
                         if (choice_equipment_menager == 1)
                         {
                             Console.Clear();
-                            int choice_add = Int_Input("Choose what equipment you want to add:\n1. Bike\n2. Motorcycle\n0. Return\nChoice: ", 0, 2, "Invalid choice", "Invalid choice");
+                            int choice_add = Int_Input("Choose what equipment you want to add:\n1. Bike\n2. Motorcycle\n3. Car\n0. Return\nChoice: ", 0, 3, "Invalid choice", "Invalid choice");
                             if (choice_add == 1)
                             {
                                 Console.Clear();
@@ -119,7 +105,7 @@ namespace Project_PO
                             else if (choice_add == 2)
                             {
                                 Console.Clear();
-                                string a = String_Input("Enter name/type of your motorcycle: ");
+                                string a = String_Input("Enter name of your motorcycle: ");
 
                                 Console.Clear();
                                 double b = Double_Input("Enter price per day for your motorcycle: ", 100, 2000, "Motorcycle cannot cost that low", "Price is too high for a motorcycle");
@@ -139,8 +125,20 @@ namespace Project_PO
                                 Console.Clear();
                                 int g = Int_Input("Enter how much kilometers have been driven on current oil (if unknown input -1): ", -1, 50000, "Selected oil range is invalid", "Either value is invalid or you should have not bought this motorcycle");
 
+                                Console.Clear();
+                                int h = Int_Input("Enter how much horse-power your motorcycle has: ", 10, 1000, "Hp cannot be that low", "Hp cannot be that high");
+
+                                Console.Clear();
+                                string i = String_Input("Enter fuel your motorcycle takes: ");
+
+                                Console.Clear();
+                                string j = String_Input("Enter gearbox your motorcycle has: ");
+
+                                Console.Clear();
+                                string k = String_Input("Specify style of your bike (for ex. chopper, cross): ");
+
                                 Max_Id++;
-                                Motorcycle nowy = new Motorcycle(Max_Id, a, teraz, true, b, c, d, e, f, g);
+                                Motorcycle nowy = new Motorcycle(Max_Id, a, teraz, false, b, c, d, e, f, g, h, i, j, k);
                                 Motorcycle_List.Add(nowy);
                                 Console.Clear();
 
@@ -149,7 +147,59 @@ namespace Project_PO
                                 File.WriteAllText("motorcycle.json", json_string);
 
                                 Console.WriteLine("Motorcycle was succesfully added to database");
-                            } 
+
+                            } else if (choice_add == 3)
+                            {
+                                Console.Clear();
+                                string a = String_Input("Enter name of your car: ");
+
+                                Console.Clear();
+                                double b = Double_Input("Enter price per day for your car: ", 100, 2000, "Car cannot cost that low", "Price is too high for a car");
+
+                                Console.Clear();
+                                double c = Double_Input("Enter deposit cost: ", 200, 2000, "Deposit for a car cannot be that low", "Deposit is too high for a car");
+
+                                Console.Clear();
+                                string d = String_Input("Enter some maintenance information for your car (for exmaple incoming oil change): ");
+
+                                Console.Clear();
+                                DateTime e = DateTime_Input("Enter date of inspection expiration : ");
+
+                                Console.Clear();
+                                string f = String_Input("Enter plate number: ");
+
+                                Console.Clear();
+                                int g = Int_Input("Enter how much kilometers have been driven on current oil (if unknown input -1): ", -1, 50000, "Selected oil range is invalid", "Either value is invalid or you should have not bought this motorcycle");
+
+                                Console.Clear();
+                                int h = Int_Input("Enter how much horse-power your motorcycle has: ", 10, 1000, "Hp cannot be that low", "Hp cannot be that high");
+
+                                Console.Clear();
+                                string i = String_Input("Enter fuel your car takes: ");
+
+                                Console.Clear();
+                                string j = String_Input("Enter gearbox your car has: ");
+
+                                Console.Clear();
+                                int k = Int_Input("Enter number of doors your car has: ", 2, 5, "Invalid number", "Invalid number");
+
+                                Console.Clear();
+                                int l = Int_Input("Enter ammount of seats for your car: ", 1, 7, "Invalid number", "Invalid number");
+
+                                Console.Clear();
+                                string m = String_Input("Specify body type(for ex. sedan, combi, coupe): "); 
+
+                                Max_Id++;
+                                Car nowy = new Car(Max_Id, a, teraz, false, b, c, d, e, f, g, h, i, j, k, l, m);
+                                Car_List.Add(nowy);
+                                Console.Clear();
+
+                                string json_string = JsonSerializer.Serialize(Car_List, options);
+
+                                File.WriteAllText("car.json", json_string);
+
+                                Console.WriteLine("Car was succesfully added to database");
+                            }
                             else if (choice_add == 0)
                             {
                                 Console.Clear();

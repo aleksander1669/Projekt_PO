@@ -6,40 +6,12 @@ using System.Text.Json.Serialization;
 
 namespace Projekt_PO
 {
-    public class Motorcycle : Equipment
+    public class Motorcycle : Combustion_Vehicle, IEquipment
     {
-        public string Maintenance { get; private set; }
-        public DateTime Inspection { get; private set; }
-        public string Plate { get; private set; }
-        public int Oil { get; private set; }
-        [JsonConstructor]
-        public Motorcycle(int id, string type, DateTime time, bool lend, double price, double deposit, string maintenance, DateTime inspection, string plate, int oil) : base(id, type, time, lend, price, deposit)
+        private string style;
+        public Motorcycle(int Id, string Name, DateTime Time, bool Rented, double Price, double Deposit, string Maintenance, DateTime Inspection, string Plate, int Oil, int Hp, string Fuel, string Gearbox, string Style) : base(Id, Name, Time, Rented, Price, Deposit, Maintenance, Inspection, Plate, Oil, Hp, Fuel, Gearbox)
         {
-            Maintenance = maintenance;
-            Inspection = inspection;
-            Plate = plate;
-            Oil = oil;
-        }
-        public override void Lendable(bool x)
-        {
-            base.Lendable(x);
-        }
-        public override void Info_Short()
-        {
-            base.Info_Short();
-            Console.WriteLine("|| Inspection: " + Inspection + " || Plate number: " + Plate + " || Oil life: " + Oil + " kilometers ||");
-        }
-        public override void Info_All()
-        {
-            base.Info_All();
-            Console.WriteLine("* Oil: " + Oil);
-            Console.WriteLine("* Inspection: " + Inspection);
-            Console.WriteLine("* Plate number: " + Plate);
-            Console.WriteLine("* Maintenance: " + Maintenance);
-        }
-        public override double Count_Cost(int days)
-        {
-            return base.Count_Cost(days);
+            style = Style;
         }
     }
 }

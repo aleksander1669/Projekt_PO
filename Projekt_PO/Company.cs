@@ -6,10 +6,10 @@ namespace Projekt_PO
 {
     public class Company : Customer
     {
-        private string nip_number;
-        public Company(string Name, string Phone, string Nip_Number) : base(Name, Phone)
+        private string nip;
+        public Company(string Name, string Phone, string Nip) : base(Name, Phone)
         {
-            nip_number = Nip_Number;
+            nip = Nip;
         }
     }
 }

@@ -5,12 +5,12 @@ using System.Timers;
 
 namespace Projekt_PO
 {
-    public class Car
+    public class Car : Combustion_Vehicle, IEquipment
     {
         int doors;
         int seats;
         string body_type;
-        public Car(int Id, string Type, DateTime Time, bool Lend, double Price, double Deposit, string Maintenance, DateTime Inspection, string Plate, int Oil, int Hp, string Fuel, string Gearbox, int Doors, int Seats, string Body_Type) : base(Id, Type, Time, Lend, Price, Deposit, Maintenance, Inspection, Plate, Oil, Hp, Fuel, Gearbox)
+        public Car(int Id, string Name, DateTime Time, bool Rented, double Price, double Deposit, string Maintenance, DateTime Inspection, string Plate, int Oil, int Hp, string Fuel, string Gearbox, int Doors, int Seats, string Body_Type) : base(Id, Name, Time, Rented, Price, Deposit, Maintenance, Inspection, Plate, Oil, Hp, Fuel, Gearbox)
         {
             doors = Doors;
             seats = Seats;

@@ -5,6 +5,11 @@ using System.Text.Json.Serialization;
 
 namespace Projekt_PO
 {
+    public interface ICustomer
+    {
+        void Display();
+        void Rent();
+    }
     public class Customer
     {
         public string name { get; private set; }
