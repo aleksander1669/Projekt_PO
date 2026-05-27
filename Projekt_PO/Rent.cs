@@ -61,24 +61,20 @@ namespace Projekt_PO
             Console.WriteLine("==============================================================================================================");
             Console.WriteLine($"|| ID: {id} | Customer: {renter.name} ||");
             Console.WriteLine($"|| Equipment: {rented_item.name} ||");
-            Console.WriteLine($"|| Rent date: {rental_date} | Rented till: {rental_till} ||");
+            Console.WriteLine($"|| Rent date: {rental_date.ToShortDateString()} | Rented till: {rental_till.ToShortDateString()} ||");
             Console.WriteLine("==============================================================================================================");
         }
 
         public void Settle()
         {
             int days = (rental_till - rental_date).Days;
-
-            if (days < 1)
-            {
-                days = 1;
-            }
+            if (days < 1) { days = 1; }
 
             Console.WriteLine("==========================================================================");
             Console.WriteLine("Rent settled:");
-            Console.WriteLine($"Price per days rented: {rented_item.price} zł x {days} days = {rented_item.price * days} zł");
-            Console.WriteLine($"Deposit: {rented_item.deposit} zł");
-            Console.WriteLine($"Total cost: {rented_item.price * days + rented_item.deposit} zł");
+            Console.WriteLine($"Price per days rented: {rented_item.price.ToString("F2")} zł x {days} days = {(rented_item.price * days).ToString("F2")} zł");
+            Console.WriteLine($"Deposit: {rented_item.deposit.ToString("F2")} zł");
+            Console.WriteLine($"Total cost: {(rented_item.price * days + rented_item.deposit).ToString("F2")} zł");
             Console.WriteLine("==========================================================================");
             rented_item.Status_Change(false);
         }

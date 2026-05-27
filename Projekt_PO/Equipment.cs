@@ -69,7 +69,7 @@ namespace Projekt_PO
         public virtual void Info_Short()
         {
             string x = rented ? "rented" : "not rented";
-            Console.WriteLine($"|| ID: {id} | Name: {name} | Status: {x} | Added: {time} ||");
+            Console.WriteLine($"|| ID: {id} | Name: {name} | Status: {x} | Added: {time.ToShortDateString()} ||");
         }
 
         /// <summary>
@@ -81,8 +81,8 @@ namespace Projekt_PO
             string x = rented ? "rented" : "not rented";
             Console.WriteLine("====================================================================================");
             Console.WriteLine($"|| ID: {id} | Name: {name} ||");
-            Console.WriteLine($"|| Price: {price} | Deposit: {deposit} ||");
-            Console.WriteLine($"|| Status: {x} | Added: {time} ||");
+            Console.WriteLine($"|| Price: {price.ToString("F2")} | Deposit: {deposit.ToString("F2")} ||"); 
+            Console.WriteLine($"|| Status: {x} | Added: {time.ToShortDateString()} ||");
         }
 
         /// <summary>
