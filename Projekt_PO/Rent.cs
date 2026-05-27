@@ -5,19 +5,47 @@ using System.Text.Json.Serialization;
 
 namespace Projekt_PO
 {
+    /// <summary>
+    /// Interfejs definiujący operacje dla wypożyczeń.
+    /// </summary>
     public interface IRent
     {
+        /// <summary>Wypisuje szczegóły wypożyczenia na ekranie.</summary>
         void Display();
+
+        /// <summary>Rozlicza wypożyczenie, obliczając koszty i zwalniając sprzęt.</summary>
         void Settle();
     }
+
+    /// <summary>
+    /// Klasa reprezentująca umowę wypożyczenia sprzętu przez klienta.
+    /// Łączy obiekt klienta z obiektem sprzętu na określony czas.
+    /// </summary>
     public class Rent : IRent
     {
+        /// <summary>Unikalny identyfikator wypożyczenia w bazie.</summary>
         public int id { get; private set; }
+
+        /// <summary>Klient, który wypożyczył sprzęt.</summary>
         public Customer renter { get; private set; }
+
+        /// <summary>Sprzęt, który został wypożyczony.</summary>
         public Equipment rented_item { get; private set; }
 
+        /// <summary>Data rozpoczęcia wypożyczenia.</summary>
         public DateTime rental_date { get; private set; }
+
+        /// <summary>Deklarowana data zwrotu sprzętu.</summary>
         public DateTime rental_till { get; private set; }
+
+        /// <summary>
+        /// Konstruktor tworzący nowe przypisanie (wypożyczenie).
+        /// </summary>
+        /// <param name="Id">ID wypożyczenia</param>
+        /// <param name="Renter">Obiekt przypisanego klienta</param>
+        /// <param name="Rented_Item">Obiekt przypisanego sprzętu</param>
+        /// <param name="Rental_Date">Data startu</param>
+        /// <param name="Rental_Till">Planowana data zakończenia</param>
         [JsonConstructor]
         public Rent(int Id, Customer Renter, Equipment Rented_Item, DateTime Rental_Date, DateTime Rental_Till)
         {
@@ -27,6 +55,7 @@ namespace Projekt_PO
             rental_date = Rental_Date;
             rental_till = Rental_Till;
         }
+
         public void Display()
         {
             Console.WriteLine("==============================================================================================================");
@@ -35,6 +64,7 @@ namespace Projekt_PO
             Console.WriteLine($"|| Rent date: {rental_date} | Rented till: {rental_till} ||");
             Console.WriteLine("==============================================================================================================");
         }
+
         public void Settle()
         {
             int days = (rental_till - rental_date).Days;

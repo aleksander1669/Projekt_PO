@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Projekt_PO
 {
-    public class Bike : Equipment, IEquipment
+    public class Bike : Equipment
     {
         public string maintenance { get; private set; }
         [JsonConstructor]

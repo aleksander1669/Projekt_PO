@@ -10,7 +10,7 @@ namespace Projekt_PO
         void Display();
         void Rent();
     }
-    public class Customer
+    public class Customer : ICustomer
     {
         public string name { get; private set; }
         public string phone { get; private set; }
@@ -20,6 +20,15 @@ namespace Projekt_PO
         {
             name = Name;
             phone = Phone;
+        }
+        public void Display()
+        {
+            Console.WriteLine($"Customer: {name} | Phone: {phone}");
+        }
+
+        public void Rent()
+        {
+
         }
     }
 }
