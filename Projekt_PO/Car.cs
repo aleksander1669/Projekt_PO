@@ -18,10 +18,6 @@ namespace Projekt_PO
             seats = Seats;
             body_type = Body_Type;
         }
-        public override void Info_Short()
-        {
-                base.Info_Short();
-        }
         public override void Info_Full()
         {
             base.Info_Full();

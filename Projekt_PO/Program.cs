@@ -502,6 +502,24 @@ namespace Project_PO
                                     Console.WriteLine("No matching id's found");
                                     continue;
                                 }
+                                if (rent_bike != null && !rent_bike.Can_Be_Removed())
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("This bike is already rented!");
+                                    continue;
+                                }
+                                if (rent_motorcycle != null && !rent_motorcycle.Can_Be_Removed())
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("This motorcycle is already rented!");
+                                    continue;
+                                }
+                                if (rent_car != null && !rent_car.Can_Be_Removed())
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("This car is already rented!");
+                                    continue;
+                                } 
 
                                 Console.Clear();
                                 int choice_rent_type = Int_Input("What type of rent your interested in:\n1. Private rent\n2. For a Company\n0. Return\nChoice: ", 0, 2, "Invalid choice", "Invalid choice");
@@ -683,7 +701,20 @@ namespace Project_PO
                                     }
                                     else
                                     {
+                                        Bike returned_bike = Bike_List.FirstOrDefault(b => b.id == rent_settle.rented_item.id);
+                                        Motorcycle returned_motorcycle = Motorcycle_List.FirstOrDefault(b => b.id == rent_settle.rented_item.id);
+                                        Car returned_car = Car_List.FirstOrDefault(b => b.id == rent_settle.rented_item.id);
 
+                                        if (returned_bike != null)
+                                        {
+                                            returned_bike.Status_Change(false);
+                                        } else if (returned_motorcycle != null)
+                                        {
+                                            returned_motorcycle.Status_Change(false);
+                                        } else if (returned_car != null)
+                                        {
+                                            returned_car.Status_Change(false);
+                                        }
                                         Console.Clear();
                                         rent_settle.Settle();
 
@@ -985,6 +1016,12 @@ namespace Project_PO
                 try
                 {
                     x = Convert.ToDateTime(Console.ReadLine());
+                    if (x <= DateTime.Now)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Date must be in the future");
+                        fine = false;
+                    }
                 }
                 catch (FormatException)
                 {
@@ -996,6 +1033,12 @@ namespace Project_PO
                 {
                     Console.Clear();
                     Console.WriteLine("Something went wrong");
+                    fine = false;
+                }
+                if (x <= DateTime.Now)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Date must be in the future");
                     fine = false;
                 }
             } while (!fine);

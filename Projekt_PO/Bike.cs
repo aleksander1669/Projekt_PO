@@ -13,10 +13,6 @@ namespace Projekt_PO
         {
             maintenance = Maintenance;
         }
-        public override void Info_Short()
-        {
-            base.Info_Short();
-        }
         public override void Info_Full()
         {
             base.Info_Full();
