@@ -277,7 +277,6 @@ namespace Project_PO
                                     {
                                         Console.Clear();
                                         bike_details.Info_Full();
-                                        Console.WriteLine("==================================================================================================================");
                                         Console.WriteLine();
                                         Console.WriteLine("Press any key to continue...");
                                         Console.ReadKey();
@@ -288,7 +287,6 @@ namespace Project_PO
                                     {
                                         Console.Clear();
                                         motorcycle_details.Info_Full();
-                                        Console.WriteLine("==================================================================================================================");
                                         Console.WriteLine();
                                         Console.WriteLine("Press any key to continue...");
                                         Console.ReadKey();
@@ -299,7 +297,6 @@ namespace Project_PO
                                     {
                                         Console.Clear();
                                         car_details.Info_Full();
-                                        Console.WriteLine("==================================================================================================================");
                                         Console.WriteLine();
                                         Console.WriteLine("Press any key to continue...");
                                         Console.ReadKey();
@@ -527,6 +524,7 @@ namespace Project_PO
 
                                     Console.Clear();
                                     string identification = String_Input_Lenght("Enter your identification number: ", 11, "Your identification number needs to contain 11 digits");
+                                    Console.Clear();
 
                                     Private rent_customer = new Private(name, phone, surename, identification);
                                     if (rent_bike != null)
@@ -1012,18 +1010,13 @@ namespace Project_PO
             {
                 fine = true;
                 Console.Write(message);
-                x = String_Input(message);
+                x = Console.ReadLine();
                 int z = x.Length;
                 if (z != lenght)
                 {
                     Console.Clear();
                     fine = false;
                     Console.WriteLine(message_lenght);
-                } else if (x == string.Empty)
-                {
-                    Console.Clear();
-                    fine = false;
-                    Console.WriteLine("This blank cannot be empty");
                 } else
                 {
                     fine = true;

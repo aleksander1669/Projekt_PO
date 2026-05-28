@@ -25,5 +25,17 @@ namespace Projekt_PO
             fuel = Fuel;
             gearbox = Gearbox;
         }
+        public override void Info_Full()
+        {
+            base.Info_Full();
+            Console.WriteLine($"|| Maintenance: {maintenance}");
+            Console.WriteLine($"|| Inspection: {inspection}");
+            Console.WriteLine($"|| Plate: {plate}");
+            Console.WriteLine($"|| Oil: {oil}");
+            Console.WriteLine($"|| Hp: {hp}");
+            Console.WriteLine($"|| Fuel: {fuel}");
+            Console.WriteLine($"|| Gearbox: {gearbox}");
+
+        }
     }
 }

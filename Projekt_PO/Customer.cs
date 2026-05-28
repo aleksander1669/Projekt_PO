@@ -8,8 +8,9 @@ namespace Projekt_PO
     public interface ICustomer
     {
         void Display();
-        void Rent();
     }
+    [JsonDerivedType(typeof(Private), typeDiscriminator: "private")]
+    [JsonDerivedType(typeof(Company), typeDiscriminator: "company")]
     public class Customer : ICustomer
     {
         public string name { get; private set; }
@@ -21,14 +22,10 @@ namespace Projekt_PO
             name = Name;
             phone = Phone;
         }
-        public void Display()
+        public virtual void Display()
         {
-            Console.WriteLine($"Customer: {name} | Phone: {phone}");
-        }
-
-        public void Rent()
-        {
-
+            Console.WriteLine($"|| Customer: {name}");
+            Console.WriteLine($"|| Phone: {phone}");
         }
     }
 }
