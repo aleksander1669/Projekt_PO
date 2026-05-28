@@ -59,9 +59,9 @@ namespace Projekt_PO
         public void Display()
         {
             Console.WriteLine("==============================================================================================================");
-            Console.WriteLine($"|| ID: {id} | Customer: {renter.name} ||");
-            Console.WriteLine($"|| Equipment: {rented_item.name} ||");
-            Console.WriteLine($"|| Rent date: {rental_date.ToShortDateString()} | Rented till: {rental_till.ToShortDateString()} ||");
+            Console.WriteLine($"|| ID: {id}");
+            renter.Display();
+            rented_item.Info_Short();
             Console.WriteLine("==============================================================================================================");
         }
 

@@ -80,9 +80,13 @@ namespace Projekt_PO
         {
             string x = rented ? "rented" : "not rented";
             Console.WriteLine("====================================================================================");
-            Console.WriteLine($"|| ID: {id} | Name: {name} ||");
-            Console.WriteLine($"|| Price: {price.ToString("F2")} | Deposit: {deposit.ToString("F2")} ||"); 
-            Console.WriteLine($"|| Status: {x} | Added: {time.ToShortDateString()} ||");
+            Console.WriteLine($"|| ID: {id}");
+            Console.WriteLine($"|| Name: {name}");
+            Console.WriteLine($"|| Price: {price.ToString("F2")}");
+            Console.WriteLine($"|| Deposit: {deposit.ToString("F2")}");
+            Console.WriteLine($"|| Status: {x}");
+            Console.WriteLine($"|| Added: {time.ToShortDateString()}");
+
         }
 
         /// <summary>
