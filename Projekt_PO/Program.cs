@@ -27,6 +27,12 @@ namespace Project_PO
             List<Rent> Rent_List = new List<Rent>();
             var options = new JsonSerializerOptions { WriteIndented = true };
 
+            List<Rent> Rent_History = new List<Rent>();
+            if (File.Exists("history.json"))
+            {
+                string loaded_history = File.ReadAllText("history.json");
+                Rent_History = JsonSerializer.Deserialize<List<Rent>>(loaded_history);
+            }
             if (File.Exists("rent.json"))
             {
                 string loaded_rent = File.ReadAllText("rent.json");
@@ -76,7 +82,7 @@ namespace Project_PO
                 {
                     case 1:
                         Console.Clear();
-                        int choice_equipment_menager = Int_Input("Choose what you want to do:\n1. Add new equipment\n2. Show available equipment\n3. Remove equipment from database\n0. Return\nChoice: ", 0, 3, "Invalid choice", "Invalid choice");
+                        int choice_equipment_menager = Int_Input("Choose what you want to do:\n1. Add new equipment\n2. Show available equipment\n3. Remove equipment from database\n4. Show available for rent only\n0. Return\nChoice: ", 0, 4, "Invalid choice", "Invalid choice");
                         if (choice_equipment_menager == 1)
                         {
                             Console.Clear();
@@ -96,7 +102,7 @@ namespace Project_PO
                                 string d = String_Input("Enter some maintenance information for your bike (for exmaple incoming chain conservation): ");
 
                                 Max_Id++;
-                                Bike nowy = new Bike(Max_Id, a, teraz, true, b, c, d);
+                                Bike nowy = new Bike(Max_Id, a, teraz, false, b, c, d);
                                 Bike_List.Add(nowy);
                                 Console.Clear();
                                 
@@ -422,6 +428,30 @@ namespace Project_PO
                                 }
                             } while (!exit_del);
                         }
+                        else if (choice_equipment_menager == 4)
+                        {
+                            Console.Clear();
+                            bool any = false;
+                            foreach (Bike bike in Bike_List.Where(b => !b.rented))
+                            {
+                                bike.Info_Short();
+                                any = true;
+                            }
+                            foreach (Motorcycle m in Motorcycle_List.Where(m => !m.rented))
+                            {
+                                m.Info_Short();
+                                any = true;
+                            }
+                            foreach (Car c in Car_List.Where(c => !c.rented))
+                            {
+                                c.Info_Short();
+                                any = true;
+                            }
+                            if (!any) Console.WriteLine("No available equipment");
+                            Console.WriteLine("\nPress any key to continue...");
+                            Console.ReadKey();
+                            Console.Clear();
+                        }
                         else if (choice_equipment_menager == 0)
                         {
                             Console.Clear();
@@ -431,7 +461,7 @@ namespace Project_PO
                     case 2:
                         Console.Clear();
                         
-                        int choice_rent = Int_Input("What action you want to do:\n1. Rent item\n2. Show all rents\n3. Settle rent\n0. Return\nChoice: ", 0, 3, "Invalid input", "Invalid input");
+                        int choice_rent = Int_Input("What action you want to do:\n1. Rent item\n2. Show all rents\n3. Settle rent\n4. Rent history\n0. Return\nChoice: ", 0, 4, "Invalid input", "Invalid input");
 
                         if (choice_rent == 0)
                         {
@@ -646,6 +676,7 @@ namespace Project_PO
                             }
                         } else if (choice_rent == 2)
                         {
+                            Console.Clear();
                             if (Rent_List.Count > 0)
                             {
                                 foreach (Rent x in Rent_List)
@@ -718,6 +749,9 @@ namespace Project_PO
                                         Console.Clear();
                                         rent_settle.Settle();
 
+                                        Rent_History.Add(rent_settle);
+                                        File.WriteAllText("history.json", JsonSerializer.Serialize(Rent_History, options));
+
                                         Rent_List.Remove(rent_settle);
 
                                         string json_return = JsonSerializer.Serialize(Rent_List, options);
@@ -740,9 +774,28 @@ namespace Project_PO
                                     }
                                 } while (!exit_settle);
 
+                            } 
+                        }
+                        else if (choice_rent == 4)
+                        {
+                            if (Rent_History.Count > 0)
+                            {
+                                foreach (Rent x in Rent_History)
+                                {
+                                    x.Display();
+                                    Console.WriteLine();
+                                }
+                                Console.WriteLine("Press any key to continue...");
+                                Console.ReadKey();
+                                Console.Clear();
+                            }
+                            else
+                            {
+                                Console.Clear();
+                                Console.WriteLine("No rental history yet");
                             }
                         }
-                            break;
+                        break;
                     case 0:
                         exit = true;
 
