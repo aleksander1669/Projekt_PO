@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Projekt_PO
 {
-    public class Private : Customer, ICustomer
+    public class Private : Customer
     {
         public string surename {  get; private set; }
         public string identification { get; private set; }
