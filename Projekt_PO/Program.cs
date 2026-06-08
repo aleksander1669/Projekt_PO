@@ -873,7 +873,7 @@ namespace Project_PO
                                     } while (!exit_settle);
                                 }
                             }
-                            else if (choice_rent == 4
+                            else if (choice_rent == 4)
                             {
                                 if (Rent_List.Count == 0)
                                 {
