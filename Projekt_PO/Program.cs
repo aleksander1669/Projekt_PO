@@ -545,8 +545,7 @@ namespace Project_PO
 
                         case 2:
                             Console.Clear();
-                            int choice_rent = Int_Input("What action you want to do:\n1. Rent item\n2. Show all rents\n3. Settle rent\n4. Rent history\n0. Return\nChoice: ", 0, 4, "Invalid input", "Invalid input");
-
+                            int choice_rent = Int_Input("What action you want to do:\n1. Rent item\n2. Show all rents\n3. Settle rent\n4. Settle multiple rents\n5. Rent history\n0. Return\nChoice: ", 0, 5, "Invalid input", "Invalid input");
                             if (choice_rent == 0)
                             {
                                 Console.Clear();
@@ -874,7 +873,77 @@ namespace Project_PO
                                     } while (!exit_settle);
                                 }
                             }
-                            else if (choice_rent == 4)
+                            else if (choice_rent == 4
+                            {
+                                if (Rent_List.Count == 0)
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("There are no rents in database");
+                                    continue;
+                                }
+                                else
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("=== CUSTOMER MULTI-SETTLE ===");
+                                    string wpisany_telefon = "";
+                                    do
+                                    {
+                                        wpisany_telefon = String_Input("Enter customer phone number to settle (or 0 to cancel): ");
+                                        if (wpisany_telefon == "0")
+                                        {
+                                            break;
+                                        }
+                                        else if (wpisany_telefon.Length != 9 || !wpisany_telefon.All(char.IsDigit))
+                                        {
+                                            Console.Clear();
+                                            Console.WriteLine("Invalid input! Phone number must consist of exactly 9 digits.");
+                                            wpisany_telefon = "";
+                                        }
+
+                                    } while (wpisany_telefon == "");
+
+                                    if (wpisany_telefon == "0")
+                                    {
+                                        Console.Clear();
+                                        continue;
+                                    }
+
+                                    List<Rent> renty_klienta = Rent_List.FindAll(r => r.renter.phone == wpisany_telefon);
+
+                                    if (renty_klienta.Count == 0)
+
+                                    {
+                                        Console.WriteLine("This customer has no active rents.");
+                                        Console.WriteLine("\nPress any key to return...");
+                                        Console.ReadKey();
+                                        continue;
+                                    }
+
+                                    int potwierdzenie = Int_Input("Are you sure you want to settle ALL these items? (1 - Yes, 0 - Cancel): ", 0, 1, "Invalid choice", "Invalid choice");
+
+                                    if (potwierdzenie == 0)
+                                    {
+                                        Console.Clear();
+                                        continue;
+                                    }
+                                    Console.WriteLine($"\nSettling all...");
+                                    double koncowy_rachunek = Rent.SettleMultiple(renty_klienta, Rent_List, Rent_History, Bike_List, Motorcycle_List, Car_List);
+
+                                    Console.WriteLine($"TOTAL INVOICE COST TO PAY: {koncowy_rachunek.ToString("F2")} zł");
+
+                                    File.WriteAllText("history.json", JsonSerializer.Serialize(Rent_History, options));
+                                    File.WriteAllText("rent.json", JsonSerializer.Serialize(Rent_List, options));
+                                    File.WriteAllText("bike.json", JsonSerializer.Serialize(Bike_List, options));
+                                    File.WriteAllText("motorcycle.json", JsonSerializer.Serialize(Motorcycle_List, options));
+                                    File.WriteAllText("car.json", JsonSerializer.Serialize(Car_List, options));
+
+                                    Console.WriteLine("\nAll items returned successfully. Press any key to continue...");
+                                    Console.ReadKey();
+                                    Console.Clear();
+                                }
+
+                            }
+                            else if (choice_rent == 5)
                             {
                                 Console.Clear();
                                 if (Rent_History.Count > 0)
