@@ -76,13 +76,19 @@ namespace Projekt_PO
 
             if (free_days > 0)
             {
-                Console.WriteLine($"DISCOUNT APPLIED! You get {free_days} day(s) for free.");
+                Console.WriteLine($"Item ID: {rented_item.id} | DISCOUNT APPLIED! You get {free_days} day(s) for free.");
             }
+
 
             Console.WriteLine($"Price per days rented: {rented_item.price.ToString("F2")} zł x {payable_days} paid days = {(rented_item.price * payable_days).ToString("F2")} zł");
             Console.WriteLine($"Deposit: {rented_item.deposit.ToString("F2")} zł");
 
             double total_cost = (rented_item.price * payable_days) + rented_item.deposit;
+            if (renter is Company)
+            {
+                Console.WriteLine($" Item ID: {rented_item.id} | B2B PROMO: 10% corporate discount applied!");
+                total_cost = total_cost * 0.90;
+            }
             Console.WriteLine($"Total cost: {total_cost.ToString("F2")} zł");
             Console.WriteLine("==========================================================================");
 

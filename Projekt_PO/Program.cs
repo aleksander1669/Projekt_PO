@@ -697,7 +697,7 @@ namespace Project_PO
                                         string phone = String_Input_Lenght("Enter your phone number: ", 9, "Phone number needs to contain 9 digits");
                                         Console.Clear();
                                         string nip = String_Input_Lenght("Enter your identification number: ", 10, "Your nip number needs to contain 10 digits");
-
+                                        Console.Clear();
                                         Company rent_customer = new Company(name, phone, nip);
 
                                         if (rent_bike != null)
@@ -919,13 +919,7 @@ namespace Project_PO
                                         continue;
                                     }
 
-                                    int potwierdzenie = Int_Input("Are you sure you want to settle ALL these items? (1 - Yes, 0 - Cancel): ", 0, 1, "Invalid choice", "Invalid choice");
-
-                                    if (potwierdzenie == 0)
-                                    {
-                                        Console.Clear();
-                                        continue;
-                                    }
+                                    Console.WriteLine("--------------------------------------------------------------------------");
                                     Console.WriteLine($"\nSettling all...");
                                     double koncowy_rachunek = Rent.SettleMultiple(renty_klienta, Rent_List, Rent_History, Bike_List, Motorcycle_List, Car_List);
 
