@@ -56,7 +56,7 @@ namespace Projekt_PO
             rental_till = Rental_Till;
         }
 
-        public void Display()
+        public void Display() //komentarz do tej metody: Wypisuje szczegóły wypożyczenia w czytelny sposób, pokazując ID, dane klienta, nazwę sprzętu oraz daty wypożyczenia i zwrotu. Służy do szybkiego przeglądu informacji o danym wypożyczeniu.
         {
             Console.WriteLine("==============================================================================================================");
             Console.WriteLine($"|| ID: {id} | Customer: {renter.name} ||");
