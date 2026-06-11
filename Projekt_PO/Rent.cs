@@ -63,7 +63,7 @@ namespace Projekt_PO
             Console.WriteLine("==============================================================================================================");
         }
 
-        public void Settle()
+        public void Settle() // komentarz: metoda rozliczająca wypożyczenie, obliczająca koszty na podstawie liczby dni, z uwzględnieniem darmowych dni co 7 dni oraz ewentualnej zniżki dla firm. Po rozliczeniu zmienia status sprzętu na dostępny.
         {
             int days = (rental_till - rental_date).Days;
             if (days < 1) { days = 1; }
@@ -108,7 +108,7 @@ namespace Projekt_PO
 
             return aktualna_kwota + cost;
         }
-        public static double SettleMultiple(
+        public static double SettleMultiple( // komentarz: metoda rozliczająca wiele wypożyczeń jednocześnie, przyjmująca listę aktywnych wypożyczeń klienta, główną listę wszystkich wypożyczeń, historię wypożyczeń oraz listy sprzętu. Dla każdego wypożyczenia oblicza koszty, uwzględnia darmowe dni i zniżki, zmienia status sprzętu na dostępny, przenosi wypożyczenie do historii i usuwa z głównej listy. Zwraca łączny koszt wszystkich rozliczonych wypożyczeń.
         List<Rent> rentyKlienta,
         List<Rent> glownaListaRent,
         List<Rent> historiaRent,
